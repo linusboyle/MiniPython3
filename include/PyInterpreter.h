@@ -18,6 +18,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses.
 */
+#ifndef PYINTERPRETER_H
+#define PYINTERPRETER_H
 
+#include "CommandLineParser.h"
+#include <fstream>
 
-class PyIn
+enum interpreter_mode
+{
+    MODE_HELP,
+    MODE_ERROR,
+    MODE_INTERACTIVE,
+    MODE_SCRIPT,
+};
+
+class PyInterpreter
+{
+    private:
+        CommandLineParser commandlineparser;
+        enum interpreter_mode mode;
+        std::fstream fin;
+    public:
+        PyInterpreter(int& argc,char** argv);
+        void exec();
+        void setMode();
+        void printHelp();
+        bool streamInit(const std::string& filepath);
+        void loop();
+};
+
+#endif
