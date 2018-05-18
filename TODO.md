@@ -36,7 +36,3 @@ the whole project should be divided as follows:
 
 They will change during implementation
 
-
-
-**NOP** yet 
-

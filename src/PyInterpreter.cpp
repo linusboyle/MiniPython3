@@ -1,3 +1,23 @@
+/*
+Simple Python Interpreter implementation by cpp
+Copyright (C) 2018 LCC,ZZH,HZL,CYH
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses.
+*/
+
+
+//general abstract interpreter class
 #include "PyInterpreter.h"
 #include <iostream>
 
@@ -14,6 +34,8 @@ void PyInterpreter::setMode()
     }
     switch(commandlineparser.getArgc())
     {
+        //FIXME
+        //here's a problem taking input "-v" alone
         case 1:
         {
             mode=MODE_INTERACTIVE;
@@ -35,10 +57,10 @@ void PyInterpreter::setMode()
 void PyInterpreter::printHelp()
 {
     std::cout<<"Mini Python3 Interpreter"<<std::endl<<"Copyright 2018 HZL,LCC,CYH,ZZH"<<std::endl<<std::endl
-        <<"interpreter [-h][SCIPTPATH]"<<std::endl
-        <<"-h:print this help and exit"<<std::endl
-        <<"SCIPTPATH:the python3 script file path"<<std::endl
-        <<"Note:without file input interpreter will start interactive mode"<<std::endl;
+        <<"interpreter [-h][SCIPTPATH]"<<std::endl<<std::endl
+        <<"  -h:print this help and exit"<<std::endl
+        <<"  SCIPTPATH:the python3 script file path"<<std::endl
+        <<"NOTE:without file input interpreter will start interactive mode"<<std::endl;
 }
 
 bool PyInterpreter::streamInit(const std::string& filepath)
@@ -65,7 +87,7 @@ void PyInterpreter::exec()
     {
         case MODE_ERROR:
             {
-                std::cout<<"Wrong command,Please see the help page"<<std::endl;
+                std::cout<<"Wrong command,please see the help page"<<std::endl;
                 printHelp();
                 break;
             }
@@ -76,7 +98,8 @@ void PyInterpreter::exec()
             }
         case MODE_INTERACTIVE:
             {
-                //TODO
+                //NOTE:
+                //I have redirect fin to cin,for consistency and reuse of function loop();
                 fin.std::ios::rdbuf(std::cin.rdbuf());
                 loop();
                 break;
@@ -85,7 +108,6 @@ void PyInterpreter::exec()
             {
                 if(streamInit(commandlineparser.getFileName()))
                 {
-                    //TODO
                     loop();
                 }
                 else
