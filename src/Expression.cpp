@@ -1,9 +1,15 @@
 #include "Expression.h"
 #include <cmath>
 
+Expression::Expression(int limit):ASTNode(limit){}
+
 Expression::Expression(Number* content):ASTNode(1)
 {
     add(content);
+}
+
+Expression::Expression():ASTNode()
+{
 }
 
 Expression::Expression(String* content):ASTNode(1)
@@ -16,6 +22,11 @@ Expression::Expression(Name* content):ASTNode(1)
     add(content);
 }
 
+void Expression::addChild(Expression* child)
+{
+    add(child);
+}
+
 ReturnValue Expression::exec()
 {
     return getChild(0)->exec();
@@ -23,7 +34,7 @@ ReturnValue Expression::exec()
 
 UnaryOperation::UnaryOperation(unaryop op,Expression* operand):Expression(1),op(op)
 {
-    add(operand);
+    addChild(operand);
 }
 
 ReturnValue UnaryOperation::exec()
@@ -38,11 +49,9 @@ ReturnValue UnaryOperation::exec()
                 return ReturnValue(0.0)-result;
             return 0-result;
         case NOT:
-            if(result.type==RETURN_BOOLEAN)
-                return !result.boolean_value;
-            //FIXME
-            //int cannot be convert to bool here...maybe not
-            return RETURN_ERROR;
+            if(result.type==RETURN_ERROR||result.type==RETURN_NONETYPE)
+                return result;
+            return !result.convert2bool();
         case INVERT:
             return ~result;
     }
@@ -51,16 +60,11 @@ ReturnValue UnaryOperation::exec()
 BinaryOperation::BinaryOperation(binop op,Expression* operand1,Expression* operand2):Expression(2),op(op)
 {
     if(operand1)
-        add(operand1);
+        addChild(operand1);
     else
         return;
     if(operand2)
-        add(operand2);
-}
-
-void BinaryOperation::addChild(Expression* child)
-{
-    add(child);
+        addChild(operand2);
 }
 
 ReturnValue BinaryOperation::exec()
@@ -109,21 +113,15 @@ ReturnValue BinaryOperation::exec()
     }
 }
 
-BooleanOperation::BooleanOperation(boolop op,Expression* operand1,Expression* operand2):Expression(),op(op)
+BooleanOperation::BooleanOperation(boolop op,Expression* operand1,Expression* operand2):op(op)
 {
    if(operand1)
-       add(operand1);
+       addChild(operand1);
    else
        return;
    if(operand2)
-       add(operand2);
+       addChild(operand2);
 }
-
-void BooleanOperation::addChild(Expression* operand)
-{
-    add(operand);
-}
-
 
 ReturnValue BooleanOperation::exec()
 {
@@ -136,7 +134,7 @@ ReturnValue BooleanOperation::exec()
             for(int i=0,n=getChildNumber();i!=n;++i)
             {
                 auto tmp=getChild(i)->exec();
-                if((!tmp.checkfalse())||i==n-1)
+                if((tmp.convert2bool())||i==n-1)
                     return tmp;
             }
             //should not reach here...
@@ -147,11 +145,74 @@ ReturnValue BooleanOperation::exec()
             for(int i=0,n=getChildNumber();i!=n;++i)
             {
                 auto tmp=getChild(i)->exec();
-                if(tmp.checkfalse()||i==n-1)
+                if(!tmp.convert2bool()||i==n-1)
                     return tmp;
             }
             return RETURN_ERROR;
     }
+}
+
+CompareOperation::CompareOperation(int size,Expression* first):Expression(size+1),size(size)
+{
+    op=new compareop[size];
+    addChild(first);
+}
+
+//void CompareOperation::addChild(Expression* child)
+//{
+    //add(child);
+//}
+
+void CompareOperation::addOperator(compareop _operator)
+{
+    op[index]=_operator;
+    index++;
+}
+
+ReturnValue CompareOperation::exec()
+{
+    int iter_left=0;
+    int iter_right=1;
+    while(iter_right<=size)
+    {
+        ReturnValue result;
+        switch (op[iter_left])
+        {
+            case EQ:
+                result=getChild(iter_left)->exec()==getChild(iter_right)->exec();
+                if(!result.boolean_value)
+                    return false;
+                break;
+            case NOTEQ:
+                result=getChild(iter_left)->exec()!=getChild(iter_right)->exec();
+                if(!result.boolean_value)
+                    return false;
+                break;
+            case GT:
+                result=getChild(iter_left)->exec()>getChild(iter_right)->exec();
+                if(!result.boolean_value)
+                    return false;
+                break;
+            case LT:
+                result=getChild(iter_left)->exec()<getChild(iter_right)->exec();
+                if(!result.boolean_value)
+                    return false;
+                break;
+            case GTE:
+                result=getChild(iter_left)->exec()>=getChild(iter_right)->exec();
+                if(!result.boolean_value)
+                    return false;
+                break;
+            case LTE:
+                result=getChild(iter_left)->exec()<=getChild(iter_right)->exec();
+                if(!result.boolean_value)
+                    return false;
+                break;
+        }
+        iter_right++;
+        iter_left++;
+    }
+    return true;
 }
 //Expression::Expression(Expression* from):Input(1)
 //{

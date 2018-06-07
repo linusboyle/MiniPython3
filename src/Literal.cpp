@@ -1,6 +1,7 @@
 #include "Literal.h"
+#include "AstFactory.h"
 
-std::map<std::string,ReturnValue> Name::symboltable;
+AstFactory& instance=AstFactory::getinstance();
 
 Number::Number(int value):ASTNode(0),int_value(value),type(INT){}
 
@@ -42,29 +43,25 @@ ReturnValue String::exec()
 
 //IDEA
 //It may not be good to do so
-Name::Name(std::string name):ASTNode(0),id(name)
-{
-    int count = symboltable.count(name);
-    if(count==0)
-        //use an undefined name is error
-        //but you can assign to it
-        //which overwrite the value error,
-        symboltable[name]=RETURN_ERROR;
-}
+Name::Name(std::string id):id(id){}
 
+//Name is a wrapper around the symboltable
+//It return the value in local context
+//if not,the global scope
 ReturnValue Name::exec()
 {
-    return symboltable[id];
+    return instance.getValue(id);
 }
 
 void Name::setValue(ReturnValue newvalue)
 {
-    symboltable[id]=newvalue;
+    instance.setValue(id,newvalue);
 }
 
-void Name::deleteRecord(std::string target)
-{
-    symboltable[target]=RETURN_ERROR;
+//if error occurs just exit the program
+//specified in astfactory
+void Name::deleteRecord(){
+    instance.deleteRecord(id);
 }
 
 NameConstant::NameConstant(_name_constant type):ASTNode(0),type(type)

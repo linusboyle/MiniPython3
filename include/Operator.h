@@ -33,4 +33,13 @@ enum binop
     //MATMULT which is @
 };
 
+enum compareop
+{
+    EQ,
+    NOTEQ,
+    LT,
+    GT,
+    LTE,
+    GTE,
+};
 #endif

@@ -1,0 +1,10 @@
+100
+b=10
+c='12345'
+d=0.0123023
+a=b+c
+d=a&b
+a%dsa
+def func()
+	print(a,b,c)
+ashSS="\\\\\\"+'\'\''

@@ -35,26 +35,15 @@ class String:public ASTNode
         virtual ReturnValue exec();
 };
 
-
-//IDEA
-//formatted?
-
-
-//NOTE
-//WE NEED BUILT-IN NAME:(It's actually in Python2)
-//TRUE==1
-//FALSE==0
-//more...
-//but not None
+//Name is visible in current context and global context
 class Name:public ASTNode
 {
     private:
-        static std::map<std::string,ReturnValue> symboltable;
         std::string id;
     public:
         Name(std::string);
-        static void deleteRecord(std::string);
         void setValue(ReturnValue newvalue);
+        void deleteRecord();
         virtual ReturnValue exec();
 };
 
