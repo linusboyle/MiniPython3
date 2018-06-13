@@ -30,6 +30,12 @@ enum _return_type_
     RETURN_FLOAT,//actually double
     RETURN_STRING,
     RETURN_BOOLEAN,
+
+    //these two is for control flow
+    //in comman conditions it's the same with error
+    RETURN_BREAK,
+    RETURN_CONTINUE,
+    RETURN_RETURN,
 };
 
 class ReturnValue
@@ -46,16 +52,19 @@ class ReturnValue
         std::string string_value;
         bool boolean_value;
 
+        //used when it's a RETURN_RETURN
+        ReturnValue* true_value;
         //indicate the type
         enum _return_type_ type=RETURN_NONETYPE;
 
         //all kinds of constructors
-        ReturnValue(_return_type_=RETURN_NONETYPE);
+        ReturnValue(_return_type_=RETURN_NONETYPE,ReturnValue* value=nullptr);
         ReturnValue(double);
         ReturnValue(int);
         ReturnValue(bool);
         //I dont want to take char as input,which will be convert to int
         ReturnValue(char)=delete;
+
         ReturnValue(std::string);
 
         //interpret the value to bool or int if possible

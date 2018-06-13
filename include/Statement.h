@@ -107,7 +107,53 @@ class Suite :public ASTNode{
 class If_Statement:public Statement{
     public:
         If_Statement(Expression*,Suite*,Suite* = nullptr);
-        ReturnValue exec();
+        ReturnValue exec() override final;
+};
+
+class While_Statement:public Statement{
+    public:
+        While_Statement(Expression*,Suite*,Suite* =nullptr);
+        ReturnValue exec() override final;
+};
+
+class Break_Statement:public Statement{
+    public:
+        inline Break_Statement();
+        ReturnValue exec() override final;
+};
+
+class Continue_Statement:public Statement{
+    public:
+        inline Continue_Statement();
+        ReturnValue exec() override final;
+};
+
+//TODO
+//after implementing list and tuple...
+//implement *for* loop
+
+
+//a very useless and tedious wrapper
+//should think a better way to represent a function
+class FunctionDefinition_Statement:public Statement{
+    public:
+        FunctionDefinition_Statement(std::string&,int,std::string*,Suite*);
+    private:
+        std::string name;
+        std::string* argnames;
+        Suite* body;
+        int arg_count;
+
+        ReturnValue exec() override final;
+};
+
+class Return_Statement:public Statement{
+    public:
+        Return_Statement();
+        Return_Statement(ReturnValue& value);
+        ReturnValue exec() override final;
+    private:
+        ReturnValue* result;
 };
 
 #endif //STATEMENT_H

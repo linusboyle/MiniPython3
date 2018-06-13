@@ -7,7 +7,7 @@ std::string Function::getID(){
     return id;
 }
 
-Function::Function(int number,std::string* ids):_args_count(number),args_name(ids){
+Function::Function(std::string name,int number,std::string* ids,Suite* body):id(name),_args_count(number),args_name(ids),body(body){
 }
 
 ReturnValue Function::execFunc(std::list<ReturnValue>* args){
@@ -21,7 +21,7 @@ ReturnValue Function::execFunc(std::list<ReturnValue>* args){
     }
 
     //execute
-    auto result=this->exec();
+    auto result=body->exec();
     //delete the useless arg list
     delete args;
 

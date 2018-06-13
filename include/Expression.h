@@ -4,6 +4,7 @@
 #include "ASTNode.h"
 #include "Literal.h"
 #include "Operator.h"
+#include <list>
 
 //expression can be some operations,or name,number,string
 class Expression:public ASTNode
@@ -15,7 +16,7 @@ class Expression:public ASTNode
         Expression(String*);
         Expression(Name*);
         virtual void addChild(Expression*);
-        virtual ReturnValue exec();
+        virtual ReturnValue exec()=0;
 };
 
 class UnaryOperation:public Expression
@@ -57,86 +58,15 @@ class CompareOperation:public Expression
         void addOperator(enum compareop);
         virtual ReturnValue exec() override;
 };
+
+//just a wrapper around callfunc in astfactory
+//do not handle return signal
+class FunctionCall:public Expression{
+    private:
+        std::string name;
+        std::list<ReturnValue>* args;
+    public:
+        FunctionCall(const std::string&,std::list<ReturnValue>*);
+        ReturnValue exec() override final;
+};
 #endif
-
-
-//class Xor_Expression;
-//class And_Expression;
-//class Shift_Expression;
-//class Arithmetic_Expression;
-//class Term;
-//class Factor;
-//class Power;
-//class Atom_Expression;
-
-//class Expression:public Input
-//{
-    //public:
-        //using Input::Input;
-        //Expression(Expression*);
-        //void addChild(Expression*);
-        //virtual ReturnValue exec();
-//};
-
-//class Xor_Expression:public Expression
-//{
-    //public:
-        //using Expression::Expression;
-        //virtual ReturnValue exec();
-//};
-
-//class And_Expression:public Expression
-//{
-    //public:
-        //using Expression::Expression;
-        //virtual ReturnValue exec();
-//};
-
-//class Shift_Expression:public Expression
-//{
-    //public:
-        //using Expression::Expression;
-        //void addChild(Operator*);
-        //virtual ReturnValue exec();
-//};
-
-//class Arithmetic_Expression:public Expression
-//{
-    //public:
-        //using Expression::Expression;
-        //void addChild(Operator*);
-        //virtual ReturnValue exec();
-//};
-
-//class Term:public Expression
-//{
-    //public:
-        //using Expression::Expression;
-        //void addChild(Factor*);
-        //virtual ReturnValue exec();
-//};
-
-//class Factor:public Expression
-//{
-    //private:
-        //bool init_as_factor=false;
-        //bool init_as_power=false;
-    //public:
-        //using Expression::Expression;
-        //Factor();
-        //Factor(Power*);
-        //void addChild(Operator*);
-        //void addChild(Factor*);
-        //void addChild(Power*);
-        //virtual ReturnValue exec();
-//};
-
-//class Power:public Expression
-//{
-    //public:
-        //using Expression::Expression;
-        //Power();
-        //void addChild(Factor*);
-        //void addChild(Atom_Expression*);
-        //virtual ReturnValue exec();
-//};

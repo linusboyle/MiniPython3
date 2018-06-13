@@ -20,9 +20,17 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #include "Func.h"
 #include <iostream>
 
-ReturnValue::ReturnValue(_return_type_ T):type(T)
+ReturnValue::ReturnValue(_return_type_ T,ReturnValue* value):type(T)
 {
-    //default to nonetype
+    if(T==RETURN_RETURN)
+    {
+        if(value==nullptr){
+            static ReturnValue holder=RETURN_NONETYPE;
+            true_value=&holder;
+        }
+        else
+            true_value=value;
+    }
 }
 
 //IDEA

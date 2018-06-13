@@ -1,11 +1,14 @@
 #include "Statement.h"
 #include <cmath>
-//#include <iostream>
+#include "Function.h"
+#include "AstFactory.h"
+
+AstFactory& instance=AstFactory::getinstance();
 
 Statement::~Statement()
 {
-
 }
+
 ReturnValue Pass_Statement::exec()
 {
     //do nothing special
@@ -214,12 +217,89 @@ void Suite::addChild(Statement* component) {
     add(component);
 }
 
+//中文注释here：
+//在多层嵌套的分支循环语句之中需要保证
+//在第一次出现break或者continue时停止
+//并且将此信号向上传递
+//如果没有while或者for接受并处理这语句
+//应该让顶层的astfactory抛出错误
 ReturnValue Suite::exec() {
     for(int i=0,n=getChildNumber();i!=n;++i) {
         auto tmp=getChild(i)->exec();
-        if(tmp.type==RETURN_ERROR){
-            return RETURN_ERROR;
+        if(tmp.type==RETURN_ERROR||tmp.type==RETURN_BREAK||tmp.type==RETURN_CONTINUE||RETURN_RETURN){
+            return tmp;
         }
     }
+    //其余情况均被忽略而同一化
     return RETURN_NONETYPE;
+}
+
+While_Statement::While_Statement(Expression* test,Suite* body,Suite* orelse):Statement(3){
+    add(test);
+    add(body);
+    if(orelse){
+        add(orelse);
+    }
+}
+
+//NOTE
+//I think the control flow here need debug
+ReturnValue While_Statement::exec(){
+    auto test=getChild(0);
+    auto body=getChild(1);
+    while(test->exec().convert2bool())
+    {
+        auto indicator=body->exec();
+        switch(indicator.type){
+            case RETURN_BREAK:
+                //just return whole loop
+                return RETURN_NONETYPE;
+            case RETURN_CONTINUE:
+                //as it says so
+                continue;
+            case RETURN_ERROR:
+                return RETURN_ERROR;
+            case RETURN_RETURN:
+                return RETURN_RETURN;
+            default:
+                continue;
+        }
+    }
+    if(getChildNumber()==3)
+        return getChild(2)->exec();
+    else
+        return RETURN_NONETYPE;
+}
+
+Break_Statement::Break_Statement():Statement(0){};
+
+Continue_Statement::Continue_Statement():Statement(0){};
+
+ReturnValue Break_Statement::exec(){
+    return RETURN_BREAK;
+}
+
+ReturnValue Continue_Statement::exec(){
+    return RETURN_CONTINUE;
+}
+
+FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,int count,std::string* args_name,Suite* _body):name(_name),argnames(args_name),body(_body),arg_count(count){}
+
+ReturnValue FunctionDefinition_Statement::exec(){
+    Function* newfunc=new Function(name,arg_count,argnames,body);
+    instance.addFunction(newfunc);
+
+    //no check of executing result
+    return RETURN_NONETYPE;
+}
+
+Return_Statement::Return_Statement(ReturnValue& value):result(&value){}
+
+//return nothing,just stop the function
+Return_Statement::Return_Statement(){
+    result=nullptr;
+}
+
+ReturnValue Return_Statement::exec(){
+    return ReturnValue(RETURN_RETURN,result);
 }

@@ -4,14 +4,15 @@
 #include "Statement.h"
 #include <list>
 
-class Function:public Suite{
+class Function{
     private:
         std::string id;
         int _args_count;
         std::string* args_name;
+        Suite* body;
     public:
         std::string getID();
-        Function(int,std::string*);
+        Function(std::string,int,std::string*,Suite*);
         ReturnValue execFunc(std::list<ReturnValue>*);
         ~Function();
 };

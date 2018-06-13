@@ -1,10 +1,10 @@
 #include "Function.h"
+#include <stack>
 
 class SymbolTable{
     private:
         std::map<std::string,ReturnValue> table;
     public:
-        //void addRecord(std::string,ReturnValue);
         void deleteRecord(const std::string&);
         void setValue(const std::string&,ReturnValue);
         ReturnValue getValue(const std::string&);
@@ -13,14 +13,11 @@ class SymbolTable{
 class AstFactory{
     public:
         static AstFactory& getinstance();
-        //void init();
         void addStatement(Statement*);
         void addFunction(Function*);
-        //std::string getContext();
         ReturnValue callFunc(const std::string&,std::list<ReturnValue>*);
         int run();
 
-        //void addRecord(std::string,ReturnValue);
         void deleteRecord(const std::string&);
         void setValue(const std::string&,ReturnValue);
         ReturnValue getValue(const std::string&);
@@ -29,7 +26,7 @@ class AstFactory{
         std::vector<Statement*> stats;
         std::vector<Function*> funcs;
 
-        std::string context;
+        std::stack<std::string> context;
 
         AstFactory();
         AstFactory(const AstFactory&)=delete ;
