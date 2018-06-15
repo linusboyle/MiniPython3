@@ -1,8 +1,6 @@
 #include "Function.h"
 #include "AstFactory.h"
 
-AstFactory& instance=AstFactory::getinstance();
-
 std::string Function::getID(){
     return id;
 }
@@ -16,7 +14,7 @@ ReturnValue Function::execFunc(std::list<ReturnValue>* args){
     //IDEA
     //is this ok?
     for(auto i=args->begin(),n=args->end();i!=n;++i){
-        instance.setValue(args_name[count],*i);
+        factory.setValue(args_name[count],*i);
         ++count;
     }
 

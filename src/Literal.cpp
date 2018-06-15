@@ -1,11 +1,9 @@
 #include "Literal.h"
 #include "AstFactory.h"
 
-AstFactory& instance=AstFactory::getinstance();
+Number::Number(int value):Expression(0),int_value(value),type(INT){}
 
-Number::Number(int value):ASTNode(0),int_value(value),type(INT){}
-
-Number::Number(double value):ASTNode(0),double_value(value),type(FLOATING){}
+Number::Number(double value):Expression(0),double_value(value),type(FLOATING){}
 
 number_type Number::getType()
 {
@@ -29,7 +27,7 @@ ReturnValue Number::exec()
     return getFloat();
 }
 
-String::String(std::string value):ASTNode(0),literal(value){}
+String::String(std::string value):Expression(0),literal(value){}
 
 std::string String::getString()
 {
@@ -50,21 +48,21 @@ Name::Name(std::string id):id(id){}
 //if not,the global scope
 ReturnValue Name::exec()
 {
-    return instance.getValue(id);
+    return factory.getValue(id);
 }
 
 void Name::setValue(ReturnValue newvalue)
 {
-    instance.setValue(id,newvalue);
+    factory.setValue(id,newvalue);
 }
 
 //if error occurs just exit the program
 //specified in astfactory
 void Name::deleteRecord(){
-    instance.deleteRecord(id);
+    factory.deleteRecord(id);
 }
 
-NameConstant::NameConstant(_name_constant type):ASTNode(0),type(type)
+NameConstant::NameConstant(_name_constant type):Expression(0),type(type)
 {
 }
 

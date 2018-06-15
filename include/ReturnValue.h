@@ -24,18 +24,18 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 //It is an imitation of Object-Oriented feature
 enum _return_type_
 {
-    RETURN_ERROR    = 0b000000001,//error
-    RETURN_NONETYPE = 0b000000010,//none,converted to false if possible
-    RETURN_INT      = 0b000000100,
-    RETURN_FLOAT    = 0b000001000,//actually double
-    RETURN_STRING   = 0b000010000,
-    RETURN_BOOLEAN  = 0b000100000,
+    RETURN_ERROR    ,//error
+    RETURN_NONETYPE ,//none,converted to false if possible
+    RETURN_INT      ,
+    RETURN_FLOAT    ,//actually double
+    RETURN_STRING   ,
+    RETURN_BOOLEAN  ,
 
     //these three is for control flow
     //in common conditions it's the same with error
-    RETURN_BREAK    = 0b001000000,
-    RETURN_CONTINUE = 0b010000000,
-    RETURN_RETURN   = 0b100000000,
+    RETURN_BREAK    ,
+    RETURN_CONTINUE ,
+    RETURN_RETURN   ,
 };
 
 class ReturnValue
@@ -47,13 +47,13 @@ class ReturnValue
         //consider about that later
     public:
         //different types of value
-        int integer_value;
-        double double_value;
-        std::string string_value;
-        bool boolean_value;
+        int integer_value=0;
+        double double_value=0.0;
+        std::string string_value = "";
+        bool boolean_value=false;
 
         //used when it's a RETURN_RETURN
-        ReturnValue* true_value;
+        ReturnValue* true_value=nullptr;
         //indicate the type
         enum _return_type_ type=RETURN_NONETYPE;
 

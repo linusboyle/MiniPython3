@@ -2,6 +2,7 @@
 #define LITERAL_H
 
 #include "ASTNode.h"
+#include "Expression.h"
 #include <map>
 
 enum number_type
@@ -10,7 +11,7 @@ enum number_type
     FLOATING,
 };
 
-class Number:public ASTNode
+class Number:public Expression
 {
     private:
         int int_value;
@@ -22,21 +23,21 @@ class Number:public ASTNode
         number_type getType();
         int getInt();
         double getFloat();
-        virtual ReturnValue exec();
+        virtual ReturnValue exec() override final;
 };
 
-class String:public ASTNode
+class String:public Expression
 {
     private:
         std::string literal;
     public:
         String(std::string);
         std::string getString();
-        virtual ReturnValue exec();
+        virtual ReturnValue exec() override final;
 };
 
 //Name is visible in current context and global context
-class Name:public ASTNode
+class Name:public Expression
 {
     private:
         std::string id;
@@ -44,7 +45,7 @@ class Name:public ASTNode
         Name(std::string);
         void setValue(ReturnValue newvalue);
         void deleteRecord();
-        virtual ReturnValue exec();
+        virtual ReturnValue exec() override final;
 };
 
 enum _name_constant
@@ -55,7 +56,7 @@ enum _name_constant
 };
 
 
-class NameConstant:public ASTNode
+class NameConstant:public Expression
 {
     private:
         _name_constant type;

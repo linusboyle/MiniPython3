@@ -19,9 +19,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
-#include "ASTNode.h"
-#include "Expression.h"
-//#include <stdarg.h>
+#include "Literal.h"
 
 //INFO
 //considering the simplicity,I ignore the input layer
@@ -38,7 +36,7 @@ class Pass_Statement:public Statement
 {
     public:
         Pass_Statement()=default;
-        ReturnValue exec() override;
+        ReturnValue exec() override final;
 };
 
 //if an expression is not used for assignment or else
@@ -48,7 +46,7 @@ class Pass_Statement:public Statement
 class Expression_Statement:public Statement
 {
     public:
-        virtual ReturnValue exec() override;
+        virtual ReturnValue exec() override final;
         //just use expression to initialize
         Expression_Statement(Expression*);
         ~Expression_Statement();
@@ -56,17 +54,18 @@ class Expression_Statement:public Statement
 
 //NOTE
 //multiple targets are ok
+//CHANGED
+//the current way to create a statement is too diverse
+//so to make it more clear,this one will only accept one target
+//statement like this:
+//      a=b=1+2/2
+//should be converted to 2 statements by the parser
 class Assign_Statement:public Statement
 {
     private:
-        Name** targetlist;
-        int targetsize;
-        int index=0;
+        Name* target;
     public:
-        Assign_Statement(int);//number of targets
-        //Assign_Statement(Expression*);
-        void setValue(Expression*);
-        void addTarget(std::string);
+        Assign_Statement(const std::string&,Expression*);
         virtual ReturnValue exec() override;
         ~Assign_Statement();
         //TODO
@@ -74,25 +73,27 @@ class Assign_Statement:public Statement
 };
 
 //ONLY one TARGET!
+//
+//this version simplify the create process
 class AugAssign_Statement:public Statement
 {
     private:
         Name* target=nullptr;
         enum binop op;
     public:
-        AugAssign_Statement(binop);
-        void setValue(Expression*);
-        void addTarget(std::string);
+        AugAssign_Statement(binop,const std::string&,Expression*);
         virtual ReturnValue exec();
         ~AugAssign_Statement();
 };
 
+//CHANGED!!
+//only one target!Keep it simple and stupid
 class Delete_Statement:public Statement{
     private:
-        std::vector<Name> target;
+        Name* target;
     public:
-        virtual ReturnValue exec() override;
-        void addTarget(std::string);
+        virtual ReturnValue exec() override final;
+        Delete_Statement(const std::string&);
 };
 
 class Suite :public ASTNode{

@@ -20,16 +20,12 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #include "Func.h"
 #include <iostream>
 
+
 ReturnValue::ReturnValue(_return_type_ T,ReturnValue* value):type(T)
 {
     if(T==RETURN_RETURN)
     {
-        if(value==nullptr){
-            static ReturnValue holder=RETURN_NONETYPE;
-            true_value=&holder;
-        }
-        else
-            true_value=value;
+        true_value=value;
     }
 }
 
@@ -114,7 +110,11 @@ ReturnValue operator+ (const ReturnValue& operand1,const ReturnValue& operand2)
         return RETURN_ERROR;
 }
 
-ReturnValue::~ReturnValue(){}
+ReturnValue::~ReturnValue(){
+    if(true_value){
+        delete true_value;
+    }
+}
 
 ReturnValue operator- (const ReturnValue& operand1,const ReturnValue& operand2)
 {

@@ -1,5 +1,12 @@
+#ifndef ASTFACTORY_H
+#define ASTFACTORY_H
+
 #include "Function.h"
 #include <stack>
+
+#ifndef factory
+#   define factory AstFactory::getinstance()
+#endif
 
 class SymbolTable{
     private:
@@ -10,6 +17,7 @@ class SymbolTable{
         ReturnValue getValue(const std::string&);
 };
 
+//单例类
 class AstFactory{
     public:
         static AstFactory& getinstance();
@@ -33,3 +41,5 @@ class AstFactory{
         AstFactory& operator=(const AstFactory&)=delete ;
         ~AstFactory();
 };
+
+#endif

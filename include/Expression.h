@@ -2,7 +2,6 @@
 #define EXPRESSION_H
 
 #include "ASTNode.h"
-#include "Literal.h"
 #include "Operator.h"
 #include <list>
 
@@ -12,11 +11,8 @@ class Expression:public ASTNode
     public:
         Expression();
         explicit Expression(int);//with limit for child
-        Expression(Number*);
-        Expression(String*);
-        Expression(Name*);
-        virtual void addChild(Expression*);
         virtual ReturnValue exec()=0;
+        ~Expression()=default;
 };
 
 class UnaryOperation:public Expression
@@ -24,8 +20,8 @@ class UnaryOperation:public Expression
     private:
         unaryop op;
     public:
-        UnaryOperation(unaryop,Expression* =nullptr);
-        virtual ReturnValue exec();
+        UnaryOperation(unaryop,Expression*);
+        virtual ReturnValue exec() override final;
 };
 
 class BinaryOperation:public Expression
@@ -33,8 +29,8 @@ class BinaryOperation:public Expression
     private:
         binop op;
     public:
-        BinaryOperation(binop,Expression* =nullptr,Expression* =nullptr);
-        virtual ReturnValue exec();
+        BinaryOperation(binop,Expression*,Expression*);
+        virtual ReturnValue exec() override final;
 };
 
 class BooleanOperation:public Expression
@@ -42,8 +38,8 @@ class BooleanOperation:public Expression
     private:
         boolop op;
     public:
-        BooleanOperation(boolop,Expression* =nullptr,Expression* =nullptr);
-        virtual ReturnValue exec();
+        BooleanOperation(boolop,Expression*,Expression*);
+        virtual ReturnValue exec() override final;
 };
 
 class CompareOperation:public Expression

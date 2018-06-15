@@ -3,8 +3,6 @@
 #include "Function.h"
 #include "AstFactory.h"
 
-AstFactory& instance=AstFactory::getinstance();
-
 Statement::~Statement()
 {
 }
@@ -30,53 +28,65 @@ Expression_Statement::~Expression_Statement()
 
 }
 
-Assign_Statement::Assign_Statement(int size):Statement(1)
+Assign_Statement::Assign_Statement(const std::string& id,Expression* value):Statement(1)
 {
-    targetsize=size;
-    targetlist=new Name*[size];
+    target=new Name(id);
+    if(value){
+        add(value);
+    }
+    else{
+        //actually an error
+        add(new NameConstant(NONE));
+    }
 }
 
-void Assign_Statement::setValue(Expression* value)
-{
-    add(value);
-}
+//void Assign_Statement::setValue(Expression* value)
+//{
+    //add(value);
+//}
 
-void Assign_Statement::addTarget(std::string target)
-{
-    targetlist[index]=new Name(target);
-    index++;
-}
+//void Assign_Statement::addTarget(std::string target)
+//{
+    //targetlist[index]=new Name(target);
+    //index++;
+//}
 
 ReturnValue Assign_Statement::exec()
 {
     ReturnValue value=getChild(0)->exec();
     if(value.type==RETURN_ERROR)
         return RETURN_ERROR;
-    for(int i=0;i!=targetsize;++i)
-        targetlist[i]->setValue(value);
-    return RETURN_NONETYPE;
+    else{
+        target->setValue(value);
+        return RETURN_NONETYPE;
+    }
 }
 
 Assign_Statement::~Assign_Statement()
 {
-    for(int i=0;i!=targetsize;++i)
-        delete targetlist[i];
-    delete [] targetlist;
+    delete target;
 }
 
-AugAssign_Statement::AugAssign_Statement(binop op):Statement(1),op(op)
-{
-}
-
-void AugAssign_Statement::setValue(Expression* child)
-{
-    add(child);
-}
-
-void AugAssign_Statement::addTarget(std::string id)
+AugAssign_Statement::AugAssign_Statement(binop op,const std::string& id,Expression* value):Statement(1),op(op)
 {
     target=new Name(id);
+    if(value){
+        add(value);
+    }
+    else{
+        add(new NameConstant(NONE));
+    }
 }
+
+//void AugAssign_Statement::setValue(Expression* child)
+//{
+    //add(child);
+//}
+
+//void AugAssign_Statement::addTarget(std::string id)
+//{
+    //target=new Name(id);
+//}
 
 ReturnValue AugAssign_Statement::exec()
 {
@@ -86,7 +96,7 @@ ReturnValue AugAssign_Statement::exec()
     ReturnValue tmp;
 
     //NOTE
-    //if error occurs,the assignment operation will not be carried out~
+    //if any error occurs,the assignment operation will not be carried out~
     switch(op)
     {
         case ADD:
@@ -130,6 +140,7 @@ ReturnValue AugAssign_Statement::exec()
             target->setValue(tmp);
             break;
         case POW:
+            //to tedious here
             if(left.type==RETURN_INT&&right.type==RETURN_INT)
                 target->setValue(pow(left.integer_value,right.integer_value));
             else if(left.type==RETURN_FLOAT&&right.type==RETURN_INT)
@@ -138,8 +149,10 @@ ReturnValue AugAssign_Statement::exec()
                 target->setValue(pow(left.integer_value,right.double_value));
             else if(left.type==RETURN_FLOAT&&right.type==RETURN_FLOAT)
                 target->setValue(pow(left.double_value,right.double_value));
-            if(target==nullptr||target->exec().type==RETURN_ERROR)
+            if(target==nullptr||target->exec().type==RETURN_ERROR){
+                target->setValue(left);
                 return RETURN_ERROR;
+            }
             break;
         case LSHIFT:
             tmp=left<<right;
@@ -180,14 +193,16 @@ AugAssign_Statement::~AugAssign_Statement()
     delete target;
 }
 
-void Delete_Statement::addTarget(std::string target) {
-    this->target.push_back(target);
+//void Delete_Statement::addTarget(std::string target) {
+    //this->target.push_back(target);
+//}
+
+Delete_Statement::Delete_Statement(const std::string& target){
+    this->target=new Name(target);
 }
 
 ReturnValue Delete_Statement::exec() {
-    for(int i=0,n=target.size();i!=n;++i) {
-        target[i].deleteRecord();
-    }
+    target->deleteRecord();
     return RETURN_NONETYPE;
 }
 
@@ -287,7 +302,7 @@ FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,in
 
 ReturnValue FunctionDefinition_Statement::exec(){
     Function* newfunc=new Function(name,arg_count,argnames,body);
-    instance.addFunction(newfunc);
+    factory.addFunction(newfunc);
 
     //no check of executing result
     return RETURN_NONETYPE;

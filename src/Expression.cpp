@@ -2,32 +2,10 @@
 #include <cmath>
 #include "AstFactory.h"
 
-AstFactory& instance=AstFactory::getinstance();
-
 Expression::Expression(int limit):ASTNode(limit){}
-
-Expression::Expression(Number* content):ASTNode(1)
-{
-    add(content);
-}
 
 Expression::Expression():ASTNode()
 {
-}
-
-Expression::Expression(String* content):ASTNode(1)
-{
-    add(content);
-}
-
-Expression::Expression(Name* content):ASTNode(1)
-{
-    add(content);
-}
-
-void Expression::addChild(Expression* child)
-{
-    add(child);
 }
 
 ReturnValue Expression::exec()
@@ -37,7 +15,7 @@ ReturnValue Expression::exec()
 
 UnaryOperation::UnaryOperation(unaryop op,Expression* operand):Expression(1),op(op)
 {
-    addChild(operand);
+    add(operand);
 }
 
 ReturnValue UnaryOperation::exec()
@@ -63,17 +41,23 @@ ReturnValue UnaryOperation::exec()
 BinaryOperation::BinaryOperation(binop op,Expression* operand1,Expression* operand2):Expression(2),op(op)
 {
     if(operand1)
-        addChild(operand1);
+        add(operand1);
     else
         return;
     if(operand2)
-        addChild(operand2);
+        add(operand2);
 }
 
 ReturnValue BinaryOperation::exec()
 {
-    auto value1=getChild(0)->exec();
-    auto value2=getChild(1)->exec();
+    auto loperand=getChild(0),roperand=getChild(1);
+    if(!(loperand&&roperand)){
+        return RETURN_ERROR;
+    }
+
+    auto value1=loperand->exec();
+    auto value2=roperand->exec();
+
     switch(op)
     {
         case ADD:
@@ -103,6 +87,7 @@ ReturnValue BinaryOperation::exec()
                 return pow(value1.integer_value,value2.double_value);
             if(value1.type==RETURN_FLOAT&&value2.type==RETURN_FLOAT)
                 return pow(value1.double_value,value2.double_value);
+            return RETURN_ERROR;
         case LSHIFT:
             return value1<<value2;
         case RSHIFT:
@@ -119,11 +104,11 @@ ReturnValue BinaryOperation::exec()
 BooleanOperation::BooleanOperation(boolop op,Expression* operand1,Expression* operand2):op(op)
 {
    if(operand1)
-       addChild(operand1);
+       add(operand1);
    else
        return;
    if(operand2)
-       addChild(operand2);
+       add(operand2);
 }
 
 ReturnValue BooleanOperation::exec()
@@ -158,7 +143,7 @@ ReturnValue BooleanOperation::exec()
 CompareOperation::CompareOperation(int size,Expression* first):Expression(size+1),size(size)
 {
     op=new compareop[size];
-    addChild(first);
+    add(first);
 }
 
 //void CompareOperation::addChild(Expression* child)
@@ -221,7 +206,7 @@ ReturnValue CompareOperation::exec()
 FunctionCall::FunctionCall(const std::string& id,std::list<ReturnValue>* args):name(id),args(args){}
 
 ReturnValue FunctionCall::exec(){
-    auto result=instance.callFunc(name,args);
+    auto result=factory.callFunc(name,args);
     //如果返回的是return信号的话，返回实际的值
     if(result.type==RETURN_RETURN){
         return *(result.true_value);
@@ -229,3 +214,4 @@ ReturnValue FunctionCall::exec(){
     //否则则是result本身
     return result;
 }
+

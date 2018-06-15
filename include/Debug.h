@@ -31,7 +31,20 @@ std::ostream& operator<<(std::ostream& out,const ReturnValue& from)
             else
                 out<<"false"<<std::endl;
             return out;
+        case RETURN_BREAK:
+            out<<"RETURN_BREAK "<<std::endl;
+            return out;
+        case RETURN_CONTINUE:
+            out<<"RETURN_CONTINUE "<<std::endl;
+            return out;
+        case RETURN_RETURN:
+            out<<"RETURN_RETURN ";
+            if(from.true_value){
+                out<<from.true_value;
+            }
+            return out;
     }
 }
 
+#define DEBUG std::cout<<"from file "<<__FILE__<<",line"<<__LINE__<<":"
 #endif //DEBUG_H
