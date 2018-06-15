@@ -34,6 +34,9 @@ void ASTNode::add(ASTNode* child)
         {
             //NOTE
             //all the runtimeerror caused by wrong use within the program will lead to exit
+            //
+            //TODO
+            //make use of cpp's error feature to throw more useful information
             std::cout<<"RuntimeError:Children nullptr."<<std::endl;
             exit(1);
         }
@@ -44,11 +47,6 @@ void ASTNode::add(ASTNode* child)
         exit(1);
     }
 }
-
-//ASTNode* ASTNode::getParent()
-//{
-    //return parent;
-//}
 
 ASTNode* ASTNode::getChild(int index)
 {
@@ -65,12 +63,8 @@ ASTNode::~ASTNode()
     for(int i=0,n=getChildNumber();i!=n;++i)
     {
         //thinking about doublefree
+        //but slow...
         if(childlist[i])
             delete childlist[i];
     }
 }
-
-//void ASTNode::setMaxChild(int number)
-//{
-    //max_child_number=number;
-//}

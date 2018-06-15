@@ -32,20 +32,21 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 class ASTNode
 {
     private:
+        //TODO
+        //should we change it to binary tree?
+        //vector is too wasteful
         std::vector<ASTNode*> childlist;
         //this might be optional,It will be used sometimes to restrict
         int max_child_number=INT_MAX;
+
     public:
 
         ASTNode()=default;
         ASTNode(int child_number);
 
-        //std::vector<ASTNode*>::iterator add(ASTNode*);
-        //the iterator is of no use here
-
         //add a child,which should be derivation from the astnode class
         //IDEA
-        //thinking about not using pointer here
+        //thinking about not using pointer here,maybe shared_ptr?
         void add(ASTNode*);
 
         //set max children number
@@ -56,18 +57,15 @@ class ASTNode
         //the size of the vector
         int getChildNumber();
 
-        //ASTNode* getParent();
-
         //return the pointer to child
+        //too slow here...
         ASTNode* getChild(int);
 
+        //consistent interface to execute
         virtual ReturnValue exec()=0;
-        //NOTE
-        //exec api will be provided by STATEMENT
-        //CHANGED
-        //back originally
 
         //delete all of the vector
+        //which is recursive
         virtual ~ASTNode();
 };
 

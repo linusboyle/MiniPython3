@@ -31,8 +31,4 @@ the whole project should be divided as follows:
 - a function module to define a function and provide callback ways.
 
 
-
-## Overall Classes ver.1
-
-They will change during implementation
-
+Han Zhilei:2018-6-15 :AST structure completed
