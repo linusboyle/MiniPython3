@@ -17,14 +17,13 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "ASTNode.h"
 #include <iostream>
-#include <cstdlib>
 
 ASTNode::ASTNode(int number)
 {
     max_child_number=number;
 }
 
-void ASTNode::add(ASTNode* child)
+void ASTNode::add(std::shared_ptr<ASTNode> child)
 {
     if(getChildNumber()<max_child_number)
     {
@@ -48,23 +47,20 @@ void ASTNode::add(ASTNode* child)
     }
 }
 
-ASTNode* ASTNode::getChild(int index)
+std::shared_ptr<ASTNode> ASTNode::getChild(int index)
 {
     return childlist[index];
 }
 
-int ASTNode::getChildNumber()
+inline int ASTNode::getChildNumber()
 {
     return childlist.size();
 }
 
 ASTNode::~ASTNode()
 {
-    for(int i=0,n=getChildNumber();i!=n;++i)
-    {
-        //thinking about doublefree
-        //but slow...
-        if(childlist[i])
-            delete childlist[i];
-    }
 }
+
+//const std::shared_ptr<ASTNode>& ASTNode::clone(){
+    //return shared_from_this();
+//}

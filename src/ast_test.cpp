@@ -15,48 +15,25 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses.
 */
-#ifndef OPERATOR_H
-#define OPERATOR_H
+#include "AST.h"
+#include "Debug.h"
 
-enum boolop
+//测试ast单例控制类的效果
+int main()
 {
-    AND,
-    OR,
-};
+    std::shared_ptr<Expression> expr=std::make_shared<BinaryOperation>(BITAND,std::make_shared<Number>(2),std::make_shared<Number>(3));
 
 
-enum unaryop
-{
-    NOT,
-    INVERT,//BITWISE NOT
-    UADD,
-    USUB,
-};
+    std::shared_ptr<Statement> stat=std::make_shared<Assign_Statement>(expr,std::make_shared<Name>("a"));
+    factory.addStatement(stat);
 
-enum binop
-{
-    ADD,
-    SUB,
-    MULT,
-    DIV,
-    FLOORDIV,
-    MOD,
-    POW,
-    LSHIFT,
-    RSHIFT,
-    BITOR,
-    BITAND,
-    BITXOR,//^
-    //MATMULT which is @
-};
+    std::shared_ptr<Statement> stat2=std::make_shared<AugAssign_Statement>(ADD,"a",expr);
+    factory.addStatement(stat2);
 
-enum compareop
-{
-    EQ,
-    NOTEQ,
-    LT,
-    GT,
-    LTE,
-    GTE,
-};
-#endif
+    std::shared_ptr<Statement> del=std::make_shared<Delete_Statement>(std::make_shared<Name>("a"));
+    factory.addStatement(del);
+    //factory.addStatement(del);
+
+    DEBUG<<factory.run()<<std::endl;
+    return 0;
+}

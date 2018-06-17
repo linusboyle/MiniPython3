@@ -1,3 +1,20 @@
+/*
+Simple Python Interpreter implementation by cpp
+Copyright (C) 2018 LCC,ZZH,HZL,CYH
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses.
+*/
 #include "Expression.h"
 #include <cmath>
 #include "AstFactory.h"
@@ -13,7 +30,7 @@ ReturnValue Expression::exec()
     return getChild(0)->exec();
 }
 
-UnaryOperation::UnaryOperation(unaryop op,Expression* operand):Expression(1),op(op)
+UnaryOperation::UnaryOperation(unaryop op,std::shared_ptr<Expression> operand):Expression(1),op(op)
 {
     add(operand);
 }
@@ -30,7 +47,7 @@ ReturnValue UnaryOperation::exec()
                 return ReturnValue(0.0)-result;
             return 0-result;
         case NOT:
-            if(result.type==RETURN_ERROR||result.type==RETURN_NONETYPE)
+            if(result.type==RETURN_ERROR||result.type==RETURN_BREAK||result.type==RETURN_CONTINUE||result.type==RETURN_RETURN)
                 return result;
             return !result.convert2bool();
         case INVERT:
@@ -38,7 +55,7 @@ ReturnValue UnaryOperation::exec()
     }
 }
 
-BinaryOperation::BinaryOperation(binop op,Expression* operand1,Expression* operand2):Expression(2),op(op)
+BinaryOperation::BinaryOperation(binop op,std::shared_ptr<Expression> operand1,std::shared_ptr<Expression> operand2):Expression(2),op(op)
 {
     if(operand1)
         add(operand1);
@@ -101,15 +118,15 @@ ReturnValue BinaryOperation::exec()
     }
 }
 
-BooleanOperation::BooleanOperation(boolop op,Expression* operand1,Expression* operand2):op(op)
-{
-   if(operand1)
-       add(operand1);
-   else
-       return;
-   if(operand2)
-       add(operand2);
-}
+//BooleanOperation::BooleanOperation(boolop op,std::shared_ptr<Expression> operand1,std::shared_ptr<Expression> operand2):op(op)
+//{
+   //if(operand1)
+       //add(operand1);
+   //else
+       //return;
+   //if(operand2)
+       //add(operand2);
+//}
 
 ReturnValue BooleanOperation::exec()
 {
@@ -140,65 +157,41 @@ ReturnValue BooleanOperation::exec()
     }
 }
 
-CompareOperation::CompareOperation(int size,Expression* first):Expression(size+1),size(size)
-{
-    op=new compareop[size];
-    add(first);
-}
-
-//void CompareOperation::addChild(Expression* child)
-//{
-    //add(child);
-//}
-
-void CompareOperation::addOperator(compareop _operator)
-{
-    op[index]=_operator;
-    index++;
-}
 
 ReturnValue CompareOperation::exec()
 {
-    int iter_left=0;
-    int iter_right=1;
-    while(iter_right<=size)
+   int iter_left=0,size=getChildNumber();
+    while(iter_left<size-1)
     {
         ReturnValue result;
-        switch (op[iter_left])
+        switch (op)
         {
             case EQ:
-                result=getChild(iter_left)->exec()==getChild(iter_right)->exec();
-                if(!result.boolean_value)
-                    return false;
+                result=getChild(iter_left)->exec()==getChild(iter_left+1)->exec();
                 break;
             case NOTEQ:
-                result=getChild(iter_left)->exec()!=getChild(iter_right)->exec();
-                if(!result.boolean_value)
-                    return false;
+                result=getChild(iter_left)->exec()!=getChild(iter_left+1)->exec();
                 break;
             case GT:
-                result=getChild(iter_left)->exec()>getChild(iter_right)->exec();
-                if(!result.boolean_value)
-                    return false;
+                result=getChild(iter_left)->exec()>getChild(iter_left+1)->exec();
                 break;
             case LT:
-                result=getChild(iter_left)->exec()<getChild(iter_right)->exec();
-                if(!result.boolean_value)
-                    return false;
+                result=getChild(iter_left)->exec()<getChild(iter_left+1)->exec();
                 break;
             case GTE:
-                result=getChild(iter_left)->exec()>=getChild(iter_right)->exec();
-                if(!result.boolean_value)
-                    return false;
+                result=getChild(iter_left)->exec()>=getChild(iter_left+1)->exec();
                 break;
             case LTE:
-                result=getChild(iter_left)->exec()<=getChild(iter_right)->exec();
-                if(!result.boolean_value)
-                    return false;
+                result=getChild(iter_left)->exec()<=getChild(iter_left+1)->exec();
                 break;
         }
-        iter_right++;
-        iter_left++;
+        if(result.type==RETURN_BOOLEAN&&!result.boolean_value)
+            return false;
+        else if(result.type==RETURN_ERROR){
+            return result;
+        }
+        else
+            iter_left++;
     }
     return true;
 }

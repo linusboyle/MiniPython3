@@ -32,6 +32,7 @@ class Statement:public ASTNode
 };
 
 //pass just do nothing.
+
 class Pass_Statement:public Statement
 {
     public:
@@ -48,7 +49,7 @@ class Expression_Statement:public Statement
     public:
         virtual ReturnValue exec() override final;
         //just use expression to initialize
-        Expression_Statement(Expression*);
+        Expression_Statement(std::shared_ptr<Expression>);
         ~Expression_Statement();
 };
 
@@ -60,12 +61,23 @@ class Expression_Statement:public Statement
 //statement like this:
 //      a=b=1+2/2
 //should be converted to 2 statements by the parser
+//CHANGED
+//use template to allow multiple target
+//syntax:
+//  EXPRESSION TARGET1 TARGET2.....TARGETINF
 class Assign_Statement:public Statement
 {
-    private:
-        Name* target;
+    //assign的顺序无所谓
+    //内部实现注意一下就行了
     public:
-        Assign_Statement(const std::string&,Expression*);
+        template<class... T>
+            Assign_Statement(std::shared_ptr<Expression> expr,std::shared_ptr<Name> last,T... other):Assign_Statement(expr,other...){
+                this->add(last);
+            };
+        Assign_Statement(std::shared_ptr<Expression> expr,std::shared_ptr<Name> last){
+            this->add(expr);
+            this->add(last);
+        }
         virtual ReturnValue exec() override;
         ~Assign_Statement();
         //TODO
@@ -78,54 +90,67 @@ class Assign_Statement:public Statement
 class AugAssign_Statement:public Statement
 {
     private:
-        Name* target=nullptr;
         enum binop op;
     public:
-        AugAssign_Statement(binop,const std::string&,Expression*);
-        virtual ReturnValue exec();
+        AugAssign_Statement(binop,std::shared_ptr<Name>,std::shared_ptr<Expression>);
+        AugAssign_Statement(binop,const std::string&,std::shared_ptr<Expression>);
+        virtual ReturnValue exec() override;
         ~AugAssign_Statement();
 };
 
 //CHANGED!!
 //only one target!Keep it simple and stupid
+//CHANGED!!
+//making it easier is sometimes better XD
 class Delete_Statement:public Statement{
-    private:
-        Name* target;
     public:
         virtual ReturnValue exec() override final;
-        Delete_Statement(const std::string&);
+        template<class... T>
+            Delete_Statement(std::shared_ptr<Name> last,T... other):Delete_Statement(other...){
+                this->add(last);
+            };
+        Delete_Statement(std::shared_ptr<Name> last){
+            this->add(last);
+        }
 };
 
-class Suite :public ASTNode{
+class Suite:public Statement{//语句块也是语句
     public:
-        Suite();
-        void addChild(Statement*);
         ReturnValue exec() override;
+
+        template<class... T>
+            Suite(std::shared_ptr<Statement> last,T... other):Suite(other...){
+                this->add(last);
+            };
+        Suite(std::shared_ptr<Statement> last){
+            this->add(last);
+        }
 };
 
 //Control Flow
 //elif is not implemented,use else if instead;
 class If_Statement:public Statement{
     public:
-        If_Statement(Expression*,Suite*,Suite* = nullptr);
+        If_Statement(std::shared_ptr<Expression>,std::shared_ptr<Suite>,std::shared_ptr<Suite> = nullptr);
         ReturnValue exec() override final;
 };
 
 class While_Statement:public Statement{
     public:
-        While_Statement(Expression*,Suite*,Suite* =nullptr);
+        While_Statement(std::shared_ptr<Expression>,std::shared_ptr<Suite>,std::shared_ptr<Suite> =nullptr);
         ReturnValue exec() override final;
 };
 
+//just a signal generator
 class Break_Statement:public Statement{
     public:
-        inline Break_Statement();
+        Break_Statement();
         ReturnValue exec() override final;
 };
 
 class Continue_Statement:public Statement{
     public:
-        inline Continue_Statement();
+        Continue_Statement();
         ReturnValue exec() override final;
 };
 
@@ -138,11 +163,11 @@ class Continue_Statement:public Statement{
 //should think a better way to represent a function
 class FunctionDefinition_Statement:public Statement{
     public:
-        FunctionDefinition_Statement(std::string&,int,std::string*,Suite*);
+        FunctionDefinition_Statement(std::string&,int,std::string*,std::shared_ptr<Suite>);
     private:
         std::string name;
         std::string* argnames;
-        Suite* body;
+        std::shared_ptr<Suite> body;
         int arg_count;
 
         ReturnValue exec() override final;
@@ -151,10 +176,10 @@ class FunctionDefinition_Statement:public Statement{
 class Return_Statement:public Statement{
     public:
         Return_Statement();
-        Return_Statement(ReturnValue& value);
+        Return_Statement(ReturnValue value);
         ReturnValue exec() override final;
     private:
-        ReturnValue* result;
+        ReturnValue result;
 };
 
 #endif //STATEMENT_H

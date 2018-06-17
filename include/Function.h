@@ -9,10 +9,10 @@ class Function{
         std::string id;
         int _args_count;
         std::string* args_name;
-        Suite* body;
+        std::shared_ptr<Suite> body;
     public:
         std::string getID();
-        Function(std::string,int,std::string*,Suite*);
+        Function(std::string,int,std::string*,std::shared_ptr<Suite>);
         ReturnValue execFunc(std::list<ReturnValue>*);
         ~Function();
 };

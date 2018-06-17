@@ -1,3 +1,20 @@
+/*
+Simple Python Interpreter implementation by cpp
+Copyright (C) 2018 LCC,ZZH,HZL,CYH
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses.
+*/
 #include "Statement.h"
 #include <cmath>
 #include "Function.h"
@@ -18,29 +35,28 @@ ReturnValue Expression_Statement::exec()
     return getChild(0)->exec();
 }
 
-Expression_Statement::Expression_Statement(Expression* content):Statement(1)
+Expression_Statement::Expression_Statement(std::shared_ptr<Expression> content):Statement(1)
 {
     add(content);
 }
 
 Expression_Statement::~Expression_Statement()
 {
-
 }
 
-Assign_Statement::Assign_Statement(const std::string& id,Expression* value):Statement(1)
-{
-    target=new Name(id);
-    if(value){
-        add(value);
-    }
-    else{
-        //actually an error
-        add(new NameConstant(NONE));
-    }
-}
+//Assign_Statement::Assign_Statement(const std::string& id,std::shared_ptr<Expression> value):Statement(1)
+//{
+    //target=new Name(id);
+    //if(value){
+        //add(value);
+    //}
+    //else{
+        ////actually an error
+        //add(std::make_shared<NameConstant>(NONE));
+    //}
+//}
 
-//void Assign_Statement::setValue(Expression* value)
+//void Assign_Statement::setValue(std::shared_ptr<Expression> value)
 //{
     //add(value);
 //}
@@ -53,32 +69,36 @@ Assign_Statement::Assign_Statement(const std::string& id,Expression* value):Stat
 
 ReturnValue Assign_Statement::exec()
 {
-    ReturnValue value=getChild(0)->exec();
+    ReturnValue value=getChild(0)->exec();//expr
     if(value.type==RETURN_ERROR)
         return RETURN_ERROR;
     else{
-        target->setValue(value);
+        for(int i=1,n=getChildNumber();i!=n;++i){
+            //no check for the cast?
+            std::dynamic_pointer_cast<Name>(getChild(i))->setValue(value);
+        }
         return RETURN_NONETYPE;
     }
 }
 
 Assign_Statement::~Assign_Statement()
 {
-    delete target;
 }
 
-AugAssign_Statement::AugAssign_Statement(binop op,const std::string& id,Expression* value):Statement(1),op(op)
+AugAssign_Statement::AugAssign_Statement(binop op,const std::string& id,std::shared_ptr<Expression> value):AugAssign_Statement(op,std::make_shared<Name>(id),value){}
+
+AugAssign_Statement::AugAssign_Statement(binop op,std::shared_ptr<Name> target,std::shared_ptr<Expression> value):Statement(),op(op)
 {
-    target=new Name(id);
+    add(target);
     if(value){
         add(value);
     }
     else{
-        add(new NameConstant(NONE));
+        add(std::make_shared<NameConstant>(NONE));
     }
 }
 
-//void AugAssign_Statement::setValue(Expression* child)
+//void AugAssign_Statement::setValue(std::shared_ptr<Expression> child)
 //{
     //add(child);
 //}
@@ -90,7 +110,8 @@ AugAssign_Statement::AugAssign_Statement(binop op,const std::string& id,Expressi
 
 ReturnValue AugAssign_Statement::exec()
 {
-    auto right=getChild(0)->exec();
+    auto target=std::dynamic_pointer_cast<Name>(getChild(0));
+    auto right=getChild(1)->exec();
     auto left=target->exec();
 
     ReturnValue tmp;
@@ -190,23 +211,21 @@ ReturnValue AugAssign_Statement::exec()
 
 AugAssign_Statement::~AugAssign_Statement()
 {
-    delete target;
 }
 
 //void Delete_Statement::addTarget(std::string target) {
     //this->target.push_back(target);
 //}
 
-Delete_Statement::Delete_Statement(const std::string& target){
-    this->target=new Name(target);
-}
 
 ReturnValue Delete_Statement::exec() {
-    target->deleteRecord();
+    for(int i=0,n=getChildNumber();i!=n;++i){
+        std::dynamic_pointer_cast<Name>(getChild(i))->deleteRecord();
+    }
     return RETURN_NONETYPE;
 }
 
-If_Statement::If_Statement(Expression* test,Suite* body,Suite* orelse):Statement(3){
+If_Statement::If_Statement(std::shared_ptr<Expression> test,std::shared_ptr<Suite> body,std::shared_ptr<Suite> orelse):Statement(3){
     add(test);
     add(body);
     if(orelse)
@@ -215,6 +234,15 @@ If_Statement::If_Statement(Expression* test,Suite* body,Suite* orelse):Statement
 
 ReturnValue If_Statement::exec(){
     auto test_result=getChild(0)->exec();
+    switch(test_result.type){
+        case RETURN_ERROR:
+        case RETURN_BREAK:
+        case RETURN_CONTINUE:
+        case RETURN_RETURN:
+            return test_result;
+        default:
+            break;
+    }
     if(test_result.convert2bool()){
         return getChild(1)->exec();
     }
@@ -226,18 +254,14 @@ ReturnValue If_Statement::exec(){
     }
 }
 
-Suite::Suite(){};
-
-void Suite::addChild(Statement* component) {
-    add(component);
-}
-
 //中文注释here：
 //在多层嵌套的分支循环语句之中需要保证
 //在第一次出现break或者continue时停止
 //并且将此信号向上传递
 //如果没有while或者for接受并处理这语句
 //应该让顶层的astfactory抛出错误
+//IDEA
+//当一个语句块在执行的时候，应该创建一个local scope吗？
 ReturnValue Suite::exec() {
     for(int i=0,n=getChildNumber();i!=n;++i) {
         auto tmp=getChild(i)->exec();
@@ -249,7 +273,7 @@ ReturnValue Suite::exec() {
     return RETURN_NONETYPE;
 }
 
-While_Statement::While_Statement(Expression* test,Suite* body,Suite* orelse):Statement(3){
+While_Statement::While_Statement(std::shared_ptr<Expression> test,std::shared_ptr<Suite> body,std::shared_ptr<Suite> orelse):Statement(3){
     add(test);
     add(body);
     if(orelse){
@@ -298,23 +322,22 @@ ReturnValue Continue_Statement::exec(){
     return RETURN_CONTINUE;
 }
 
-FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,int count,std::string* args_name,Suite* _body):name(_name),argnames(args_name),body(_body),arg_count(count){}
+FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,int count,std::string* args_name,std::shared_ptr<Suite> _body):name(_name),argnames(args_name),body(_body),arg_count(count){}
 
 ReturnValue FunctionDefinition_Statement::exec(){
-    Function* newfunc=new Function(name,arg_count,argnames,body);
+    std::shared_ptr<Function> newfunc=std::make_shared<Function>(name,arg_count,argnames,body);
     factory.addFunction(newfunc);
 
     //no check of executing result
     return RETURN_NONETYPE;
 }
 
-Return_Statement::Return_Statement(ReturnValue& value):result(&value){}
+Return_Statement::Return_Statement(ReturnValue value):result(value){}
 
 //return nothing,just stop the function
 Return_Statement::Return_Statement(){
-    result=nullptr;
 }
 
 ReturnValue Return_Statement::exec(){
-    return ReturnValue(RETURN_RETURN,result);
+    return ReturnValue(RETURN_RETURN,&result);
 }

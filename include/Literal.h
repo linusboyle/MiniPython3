@@ -17,14 +17,15 @@ class Number:public Expression
         int int_value;
         double double_value;
         number_type type;
-    public:
-        Number(int);
-        Number(double);
-        number_type getType();
         int getInt();
         double getFloat();
+    public:
+        Number(int);
+        Number(char)=delete;
+        Number(double);
         virtual ReturnValue exec() override final;
 };
+
 
 class String:public Expression
 {

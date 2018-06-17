@@ -1,3 +1,20 @@
+/*
+Simple Python Interpreter implementation by cpp
+Copyright (C) 2018 LCC,ZZH,HZL,CYH
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses.
+*/
 #include "AstFactory.h"
 #include <iostream>
 
@@ -14,11 +31,11 @@ AstFactory::AstFactory(){
     funcs.clear();
 }
 
-void AstFactory::addStatement(Statement* stat){
+void AstFactory::addStatement(std::shared_ptr<Statement> stat){
     stats.push_back(stat);
 }
 
-void AstFactory::addFunction(Function* func){
+void AstFactory::addFunction(std::shared_ptr<Function> func){
     funcs.push_back(func);
 }
 
@@ -79,7 +96,7 @@ void AstFactory::deleteRecord(const std::string& id){
         if(table["global"]->getValue(id).type!=RETURN_ERROR)
             table["global"]->deleteRecord(id);
         else{
-            std::cerr<<"Segmental fault:fatal error delete "<<id<<"in"<<context.top()<<std::endl;
+            std::cerr<<"Segmental fault:fatal error delete "<<id<<" in context "<<context.top()<<std::endl;
             exit(1);
         }
     }
@@ -100,10 +117,10 @@ AstFactory::~AstFactory(){
     for(auto target:table){
         delete target.second;
     }
-    for(auto target:stats){
-        delete target;
-    }
-    for(auto target:funcs){
-        delete target;
-    }
+    //for(auto target:stats){
+        //delete target;
+    //}
+    //for(auto target:funcs){
+        //delete target;
+    //}
 }

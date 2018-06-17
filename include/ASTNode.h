@@ -19,26 +19,28 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #ifndef ASTNODE_H
 #define ASTNODE_H
 
-#include <vector>
 #include <climits>
+#include <vector>
+#include <memory>
 #include "ReturnValue.h"
 
 //INFO
-//ASTnode is the very basic of AST abstractions
+//ASTnode is the very base of AST abstractions
 //
 //CHANGED
 //It's now mono-linked list
 //because the parent pointer is of little use.
-class ASTNode
+class ASTNode:public std::enable_shared_from_this<ASTNode>
 {
     private:
         //TODO
         //should we change it to binary tree?
         //vector is too wasteful
-        std::vector<ASTNode*> childlist;
+        std::vector<std::shared_ptr<ASTNode>> childlist;
         //this might be optional,It will be used sometimes to restrict
         int max_child_number=INT_MAX;
 
+        ASTNode(const ASTNode&)=delete;
     public:
 
         ASTNode()=default;
@@ -47,7 +49,7 @@ class ASTNode
         //add a child,which should be derivation from the astnode class
         //IDEA
         //thinking about not using pointer here,maybe shared_ptr?
-        void add(ASTNode*);
+        void add(std::shared_ptr<ASTNode>);
 
         //set max children number
         //CHANGED
@@ -59,7 +61,9 @@ class ASTNode
 
         //return the pointer to child
         //too slow here...
-        ASTNode* getChild(int);
+        std::shared_ptr<ASTNode> getChild(int);
+
+        //const std::shared_ptr<ASTNode>& clone();
 
         //consistent interface to execute
         virtual ReturnValue exec()=0;

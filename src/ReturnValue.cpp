@@ -19,6 +19,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #include "ReturnValue.h"
 #include "Func.h"
 #include <iostream>
+#include <cmath>
 
 
 ReturnValue::ReturnValue(_return_type_ T,ReturnValue* value):type(T)
@@ -61,13 +62,10 @@ inline bool _same_type(const ReturnValue& operand1,const ReturnValue& operand2)
 //dangerous if it is not boolean value
 //It will be used when carrying out operation to boolean
 //such as True+False
+//do not call this
 inline int ReturnValue::convert2int() const
 {
     return boolean_value?1:0;
-    //if(boolean_value)
-        //return 1;
-    //else
-        //return 0;
 }
 
 bool ReturnValue::convert2bool() const
@@ -82,6 +80,10 @@ bool ReturnValue::convert2bool() const
             return !string_value.empty();
         case RETURN_FLOAT:
             return _equal_float(double_value,0.0)?false:true;
+            //FIXED
+            //none is a kind of false
+        case RETURN_NONETYPE:
+            return false;
         default:
             std::cerr<<"RuntimeError:Expected test,but provided non-comparable value;aborting"<<std::endl;
             exit(1);
@@ -159,27 +161,44 @@ ReturnValue operator* (const ReturnValue& operand1,const ReturnValue& operand2)
 //FIXME
 //I dont permit double/int here
 //think about it
+//FIXED
+
+//非常c的风格
 ReturnValue operator/ (const ReturnValue& operand1,const ReturnValue& operand2)
 {
-    if(_same_type(operand1,operand2))
+    double left,right;
+    switch(operand1.type)
     {
-        switch(operand1.type)
-        {
-            case RETURN_INT:
-                test_zero(operand2.integer_value);
-                return ReturnValue(operand1.integer_value/operand2.integer_value);
-            case RETURN_FLOAT:
-                test_zero(operand2.double_value);
-                return ReturnValue(operand1.double_value/operand2.double_value);
-            case RETURN_BOOLEAN:
-                test_zero(operand2.convert2int());
-                return operand1.convert2int()/operand2.convert2int();
-            default:
-                return RETURN_ERROR;
-        }
+        case RETURN_INT:
+            left=(double)operand1.integer_value;
+            break;
+        case RETURN_FLOAT:
+            left=operand1.double_value;
+            break;
+        case RETURN_BOOLEAN:
+            left=(double)operand1.boolean_value;
+            break;
+        default:
+            return RETURN_ERROR;
     }
-    else
-        return RETURN_ERROR;
+    switch(operand2.type)
+    {
+        case RETURN_INT:
+            test_zero(operand2.integer_value);
+            right=(double)operand2.integer_value;
+            break;
+        case RETURN_FLOAT:
+            test_zero(operand2.double_value);
+            right=operand2.double_value;
+            break;
+        case RETURN_BOOLEAN:
+            test_zero(operand2.convert2int());
+            right=(double)operand2.boolean_value;
+            break;
+        default:
+            return RETURN_ERROR;
+    }
+    return (double)(left/right);
 }
 
 ReturnValue operator| (const ReturnValue& operand1,const ReturnValue& operand2)
@@ -232,31 +251,47 @@ ReturnValue operator^ (const ReturnValue& operand1,const ReturnValue& operand2)
                 return RETURN_ERROR;
         }
     }
-    else
-        return RETURN_ERROR;
+    return RETURN_ERROR;
 }
 
 //FIXME
 //I forbid floating point modulus here
-
+//FIXED
 ReturnValue operator% (const ReturnValue& operand1,const ReturnValue& operand2)
 {
-    if(_same_type(operand1,operand2))
+    double left,right;
+    switch(operand1.type)
     {
-        switch(operand1.type)
-        {
-            case RETURN_INT:
-                test_zero(operand2.integer_value);
-                return ReturnValue(operand1.integer_value%operand2.integer_value);
-            case RETURN_BOOLEAN:
-                test_zero(operand2.convert2int());
-                return operand1.convert2int()%operand2.convert2int();
-            default:
-                return RETURN_ERROR;
-        }
+        case RETURN_INT:
+            left=(double)operand1.integer_value;
+            break;
+        case RETURN_FLOAT:
+            left=operand1.double_value;
+            break;
+        case RETURN_BOOLEAN:
+            left=(double)operand1.boolean_value;
+            break;
+        default:
+            return RETURN_ERROR;
     }
-    else
-        return RETURN_ERROR;
+    switch(operand2.type)
+    {
+        case RETURN_INT:
+            test_zero(operand2.integer_value);
+            right=(double)operand2.integer_value;
+            break;
+        case RETURN_FLOAT:
+            test_zero(operand2.double_value);
+            right=operand2.double_value;
+            break;
+        case RETURN_BOOLEAN:
+            test_zero(operand2.convert2int());
+            right=(double)operand2.boolean_value;
+            break;
+        default:
+            return RETURN_ERROR;
+    }
+    return std::fmod(left,right);
 }
 
 ReturnValue operator~(const ReturnValue& operand)
@@ -363,18 +398,30 @@ ReturnValue operator<=(const ReturnValue& operand1,const ReturnValue& operand2)
 {
     auto tmp1=operand1<operand2;
     auto tmp2=operand1==operand2;
-    return tmp1.boolean_value||tmp2.boolean_value;
+    if(tmp1.type==RETURN_BOOLEAN&&tmp2.type==RETURN_BOOLEAN)
+        return tmp1.boolean_value||tmp2.boolean_value;
+    else{
+        return RETURN_ERROR;
+    }
 }
 
 ReturnValue operator>=(const ReturnValue& operand1,const ReturnValue& operand2)
 {
     auto tmp1=operand1>operand2;
     auto tmp2=operand1==operand2;
-    return tmp1.boolean_value||tmp2.boolean_value;
+    if(tmp1.type==RETURN_BOOLEAN&&tmp2.type==RETURN_BOOLEAN)
+        return tmp1.boolean_value||tmp2.boolean_value;
+    else{
+        return RETURN_ERROR;
+    }
 }
 
 ReturnValue operator!=(const ReturnValue& operand1,const ReturnValue& operand2)
 {
     auto tmp=operand1==operand2;
-    return !(tmp.boolean_value);
+    if(tmp.type==RETURN_BOOLEAN)
+        return !(tmp.boolean_value);
+    else{
+        return tmp;
+    }
 }
