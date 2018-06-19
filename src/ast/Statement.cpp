@@ -322,11 +322,10 @@ ReturnValue Continue_Statement::exec(){
     return RETURN_CONTINUE;
 }
 
-FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,int count,std::string* args_name,std::shared_ptr<Suite> _body):name(_name),argnames(args_name),body(_body),arg_count(count){}
+//FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,int count,std::string* args_name,std::shared_ptr<Suite> _body):name(_name),argnames(args_name),body(_body),arg_count(count){}
 
 ReturnValue FunctionDefinition_Statement::exec(){
-    std::shared_ptr<Function> newfunc=std::make_shared<Function>(name,arg_count,argnames,body);
-    factory.addFunction(newfunc);
+    factory.addFunction(func);
 
     //no check of executing result
     return RETURN_NONETYPE;
@@ -336,6 +335,7 @@ Return_Statement::Return_Statement(ReturnValue value):result(value){}
 
 //return nothing,just stop the function
 Return_Statement::Return_Statement(){
+    result=RETURN_NONETYPE;
 }
 
 ReturnValue Return_Statement::exec(){

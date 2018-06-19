@@ -40,25 +40,25 @@ void AstFactory::addFunction(std::shared_ptr<Function> func){
 }
 
 //this is the only way to switch context in the program
-ReturnValue AstFactory::callFunc(const std::string& id,std::list<ReturnValue>* args){
-    //std::string currentcontext=context.top();
-    for(int i=0,n=funcs.size();i!=n;++i){
-        if(funcs[i]->getID()==id){
-            context.push(id);
-            //if not created or is aborted,create it
-            if(table.count(id)==0||table[id]==nullptr){
-                table[id]=new SymbolTable();
-            }
-            ReturnValue result=funcs[i]->execFunc(args);
-            //switch back to original context
-            context.pop();
-            //abort the local context
-            delete table[id];
-            return result;
-        }
-    }
-    return RETURN_ERROR;
-}
+//ReturnValue AstFactory::callFunc(const std::string& id,std::list<ReturnValue>* args){
+    ////std::string currentcontext=context.top();
+    //for(int i=0,n=funcs.size();i!=n;++i){
+        //if(funcs[i]->getID()==id){
+            //context.push(id);
+            ////if not created or is aborted,create it
+            //if(table.count(id)==0||table[id]==nullptr){
+                //table[id]=new SymbolTable();
+            //}
+            //ReturnValue result=funcs[i]->execFunc(args);
+            ////switch back to original context
+            //context.pop();
+            ////abort the local context
+            //delete table[id];
+            //return result;
+        //}
+    //}
+    //return RETURN_ERROR;
+//}
 
 int AstFactory::run(){
     for(int i=0,n=stats.size();i!=n;++i){
@@ -107,20 +107,44 @@ void AstFactory::setValue(const std::string& id,ReturnValue newvalue){
 }
 
 ReturnValue AstFactory::getValue(const std::string& id){
-    if(table[context.top()]->getValue(id).type!=RETURN_ERROR)
-        return table[context.top()]->getValue(id);
+    ReturnValue tmp=table[context.top()]->getValue(id);
+    if(tmp.type!=RETURN_ERROR)
+        return tmp;
     else
         return table["global"]->getValue(id);
 }
 
 AstFactory::~AstFactory(){
     for(auto target:table){
-        delete target.second;
+        if(target.second)
+            delete target.second;
     }
-    //for(auto target:stats){
-        //delete target;
-    //}
-    //for(auto target:funcs){
-        //delete target;
-    //}
+}
+
+const std::shared_ptr<Function>& AstFactory::getFunc(const std::string& id){
+    for(int i=0,n=funcs.size();i!=n;++i){
+        if(funcs[i]->getID()==id){
+            return funcs[i];
+        }
+    }
+    std::cerr<<"RuntimeError:call to function that does not exist"<<std::endl;
+    exit(1);
+}
+
+void AstFactory::createScope(const std::string& id){
+    context.push(id);
+
+    //if not created or is aborted,create it
+    if(table.count(id)==0||table[id]==nullptr){
+        table[id]=new SymbolTable();
+    }
+}
+
+void AstFactory::deleteScope(const std::string& id){
+    //switch back to original context
+    context.pop();
+
+    //abort the local context
+    delete table[id];
+    table[id]=nullptr;
 }

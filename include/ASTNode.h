@@ -30,7 +30,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 //CHANGED
 //It's now mono-linked list
 //because the parent pointer is of little use.
-class ASTNode:public std::enable_shared_from_this<ASTNode>
+class ASTNode//:public std::enable_shared_from_this<ASTNode>
 {
     private:
         //TODO

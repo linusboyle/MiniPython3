@@ -1,8 +1,8 @@
 #ifndef ASTFACTORY_H
 #define ASTFACTORY_H
 
-#include "Function.h"
 #include <stack>
+#include "Function.h"
 
 #ifndef factory
 #   define factory AstFactory::getinstance()
@@ -21,9 +21,40 @@ class SymbolTable{
 class AstFactory{
     public:
         static AstFactory& getinstance();
+
         void addStatement(std::shared_ptr<Statement>);
         void addFunction(std::shared_ptr<Function>);
-        ReturnValue callFunc(const std::string&,std::list<ReturnValue>*);
+        //TODO
+        //重构函数实现，采用可变模板传参数
+
+        const std::shared_ptr<Function>& getFunc(const std::string&);
+        //template<class... Arg>
+        //ReturnValue callFunc(const std::string& id,Arg... arg){
+            //for(int i=0,n=funcs.size();i!=n;++i){
+                //if(funcs[i]->getID()==id){
+                    //context.push(id);
+
+                    ////if not created or is aborted,create it
+                    //if(table.count(id)==0||table[id]==nullptr){
+                        //table[id]=new SymbolTable();
+                    //}
+
+                    //ReturnValue result=funcs[i]->execFunc(arg...);
+
+                    ////switch back to original context
+                    //context.pop();
+
+                    ////abort the local context
+                    //delete table[id];
+
+                    //return result;
+                //}
+            //}
+            //return RETURN_ERROR;
+        //}
+
+        void createScope(const std::string&);
+        void deleteScope(const std::string&);
         int run();
 
         void deleteRecord(const std::string&);
@@ -37,8 +68,10 @@ class AstFactory{
         std::stack<std::string> context;
 
         AstFactory();//内置函数放在这里
-        AstFactory(const AstFactory&)=delete ;
-        AstFactory& operator=(const AstFactory&)=delete ;
+        AstFactory(const AstFactory&)=delete;
+        AstFactory(AstFactory&&)=delete;
+        AstFactory& operator=(const AstFactory&)=delete;
+        AstFactory& operator=(AstFactory&&)=delete;
         ~AstFactory();
 };
 

@@ -6,8 +6,7 @@
 #ifndef ABSTRACT_SYNTAX_TREE_H
     #define ABSTRACT_SYNTAX_TREE_H
 
-    #include "Statement.h"
-    #include "AstFactory.h"
+    #include "FunctionCall.h"
     //that's enough XD
 
     //a strange and stupid template

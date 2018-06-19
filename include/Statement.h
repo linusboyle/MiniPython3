@@ -158,18 +158,16 @@ class Continue_Statement:public Statement{
 //after implementing list and tuple...
 //implement *for* loop
 
-
+class Function;
 //a very useless and tedious wrapper
 //should think a better way to represent a function
 class FunctionDefinition_Statement:public Statement{
     public:
-        FunctionDefinition_Statement(std::string&,int,std::string*,std::shared_ptr<Suite>);
+        template<class... Args>
+        FunctionDefinition_Statement(const std::string& id,std::shared_ptr<Suite> body,Args... arg):func(std::make_shared<Function>(id,body,arg...)){
+        }
     private:
-        std::string name;
-        std::string* argnames;
-        std::shared_ptr<Suite> body;
-        int arg_count;
-
+        std::shared_ptr<Function> func;
         ReturnValue exec() override final;
 };
 

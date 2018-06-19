@@ -196,15 +196,13 @@ ReturnValue CompareOperation::exec()
     return true;
 }
 
-FunctionCall::FunctionCall(const std::string& id,std::list<ReturnValue>* args):name(id),args(args){}
-
-ReturnValue FunctionCall::exec(){
-    auto result=factory.callFunc(name,args);
-    //如果返回的是return信号的话，返回实际的值
-    if(result.type==RETURN_RETURN){
-        return *(result.true_value);
-    }
-    //否则则是result本身
-    return result;
-}
+//ReturnValue FunctionCall::exec(){
+    //auto result=factory.callFunc(name,args);
+    ////如果返回的是return信号的话，返回实际的值
+    //if(result.type==RETURN_RETURN){
+        //return *(result.true_value);
+    //}
+    ////否则则是result本身
+    //return result;
+//}
 
