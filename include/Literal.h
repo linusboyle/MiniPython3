@@ -25,7 +25,8 @@ class Number:public Expression
         virtual ReturnValue exec() override final;
 };
 
-
+//TODO
+//实现格式化字符串
 class String:public Expression
 {
     private:
@@ -33,6 +34,15 @@ class String:public Expression
     public:
         String(const std::string&);
         std::string getString();
+        virtual ReturnValue exec() override final;
+};
+
+class Formatted_String:public Expression{
+    private:
+        std::string base_string;
+    public:
+        //I will not use template anymore,just tired of it
+        Formatted_String(const std::string&,std::vector<std::shared_ptr<Expression>>&);
         virtual ReturnValue exec() override final;
 };
 

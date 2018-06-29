@@ -189,4 +189,15 @@ class Return_Statement:public Statement{
         ReturnValue result;
 };
 
+//a built-in statement,but since we are building python3,it should never be used
+//by parser,and it's here just for the convenience of print function
+//
+//格式化输出被专门的字符串类解析
+//这里只是分别输出而已,定义分隔符
+class Print_Statement:public Statement{
+    public:
+        Print_Statement(std::shared_ptr<Expression>);
+        virtual ReturnValue exec() override final;
+};
+
 #endif //STATEMENT_H

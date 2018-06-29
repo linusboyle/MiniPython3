@@ -19,7 +19,9 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #define RETURNVALUE_H
 
 #include <string>
+#include <iostream>
 
+#define DEBUG std::cout<<"from file "<<__FILE__<<",line "<<__LINE__<<":"
 //enumeration of all the possible returntype
 //It is an imitation of Object-Oriented feature
 enum _return_type_
@@ -102,6 +104,8 @@ class ReturnValue
         friend ReturnValue operator!=(const ReturnValue&,const ReturnValue&);
         friend ReturnValue operator>=(const ReturnValue&,const ReturnValue&);
         friend ReturnValue operator<=(const ReturnValue&,const ReturnValue&);
+
+        friend std::ostream& operator<<(std::ostream&,const ReturnValue&);
 };
 
 

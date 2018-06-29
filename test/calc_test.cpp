@@ -1,5 +1,4 @@
 #include "AST.h"
-#include "Debug.h"
 
 //算数表达式运算测试
 int main(){

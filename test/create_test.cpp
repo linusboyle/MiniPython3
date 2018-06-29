@@ -1,5 +1,4 @@
 #include "AST.h"
-#include "Debug.h"
 
 //测试通过宏简化后的的创建过程
 int main()

@@ -37,6 +37,18 @@ AstFactory::AstFactory(){
 
     //TODO
     //push default function,such as print();
+    //
+    //print just handle one target(obvious because of the difficulty)
+    //parser should take care of this
+    std::shared_ptr<Function> print=std::make_shared<Function>("print",
+            std::make_shared<Suite>(
+                    std::make_shared<Print_Statement>(
+                            std::make_shared<Name>("a")
+                    )
+            ),
+            std::make_shared<Argument>("a")
+    );
+    addFunction(print);
 }
 
 void AstFactory::addStatement(const std::shared_ptr<Statement>& stat){

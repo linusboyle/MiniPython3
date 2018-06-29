@@ -424,3 +424,33 @@ ReturnValue operator!=(const ReturnValue& operand1,const ReturnValue& operand2)
         return tmp;
     }
 }
+
+std::ostream& operator<<(std::ostream& out,const ReturnValue& from)
+{
+    switch(from.type)
+    {
+        case RETURN_NONETYPE:
+            out<<"None";//这里可能有潜在的问题，因为ast内部用了很多none
+            return out;
+        case RETURN_INT:
+            out<<from.integer_value;
+            return out;
+        case RETURN_STRING:
+            out<<from.string_value;
+            return out;
+        case RETURN_FLOAT:
+            out<<from.double_value;
+            return out;
+        case RETURN_BOOLEAN:
+            out<<(from.boolean_value ? "true":"false");
+            return out;
+        case RETURN_RETURN:
+            if(from.true_value){
+                out<<from.true_value;
+            }
+            return out;
+        default:
+            return out;
+    }
+}
+

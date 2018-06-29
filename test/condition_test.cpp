@@ -1,5 +1,4 @@
 #include "AST.h"
-#include "Debug.h"
 
 //test of condition or comparison
 int main(){

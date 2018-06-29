@@ -1,5 +1,4 @@
 #include "AST.h"
-#include "Debug.h"
 
 int main(){
     //test the if control flow

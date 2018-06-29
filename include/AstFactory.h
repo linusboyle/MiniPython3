@@ -3,6 +3,7 @@
 
 #include <stack>
 #include "Function.h"
+#include <map>
 
 #ifndef factory
 #   define factory AstFactory::getinstance()

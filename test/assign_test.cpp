@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "AST.h"
-#include "Debug.h"
 
 //运行效率极低
 //创建效率也极低

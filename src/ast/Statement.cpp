@@ -17,6 +17,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "Statement.h"
 #include <cmath>
+#include <iostream>
 #include "Function.h"
 #include "AstFactory.h"
 
@@ -355,4 +356,14 @@ Return_Statement::Return_Statement(){
 
 ReturnValue Return_Statement::exec(){
     return ReturnValue(RETURN_RETURN,&result);
+}
+
+Print_Statement::Print_Statement(std::shared_ptr<Expression> target){
+        this->add(target);
+}
+
+ReturnValue Print_Statement::exec() {
+    std::cout<<getChild(0)->exec();
+    std::cout<<std::endl;//更改休止符比较困难，就让它是换行吧
+    return RETURN_NONETYPE;
 }
