@@ -3,6 +3,9 @@
 
 #include "Statement.h"
 
+
+//代表一个参数
+//名称必须，默认值可选，直接使用create宏即可
 class Argument{
     private:
         const std::string id;
@@ -16,14 +19,21 @@ class Function{
     private:
         const std::string id;
         std::vector<std::shared_ptr<Argument>> arguments;
+
+        //counter,count the current pushed arguments
+        //must be assign to 0 each time a functioncall ends
         unsigned int index=0;
         std::shared_ptr<Suite> body;
 
-        //void pushArg(const std::shared_ptr<Argument>&);
+        friend FunctionCall;
+        friend FunctionDefinition_Statement;
+
+        //usable by funccall
         void pushArg(ReturnValue);
         void pushDefault();
 
-        //bool _has_explicit=false;
+        //usable by funcdef
+        void addArg(const std::shared_ptr<Argument>&);
     public:
         const std::string& getID() const;
 
@@ -32,6 +42,8 @@ class Function{
         //those without one,but because of the template method here,
         //no check about that is carried out
         //if we tend to throw a warning,the parser have to take care about that.
+
+        //如果不想用模板，那就忽略之
         template<class... T>
         Function(const std::string& id,std::shared_ptr<Suite> body,T... arg):id(id),body(body){
             int justaholder[]={(this->arguments.push_back(arg),0)...};//此处的参数必须有名字，不一定有默认值
@@ -45,15 +57,19 @@ class Function{
         //不用再遍历一边参数了。
 
         //注意此处结尾必须复位index
-        ReturnValue operator()();//调用此函数只能是没有参数的情况
+        //设计为函数对象，使用std::invoke 调用 详见funccall
+        ReturnValue operator()();//调用此函数只能是没有参数的情况,或者所需参数已经全部add
 
         //NOTE
         //调用显式的参数传递必须全部在按参数位置传参数之后
         //ReturnValue execFunc(const std::shared_ptr<Argument>&);
 
+        //README
+        //以下模板供parser使用，不一定需要
+        //如果不需要也不会被编译
         ReturnValue operator()(ReturnValue);
 
-        //按参数名传递
+        //按参数名传递 废弃
         //template<class... T>
         //ReturnValue execFunc(const std::shared_ptr<Argument>& first,T... args){
             //this->pushArg(first);

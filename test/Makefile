@@ -2,7 +2,7 @@
 
 TARGET=assign_test ast_test create_test boolean_test calc_test condition_test If_test while_test funcdef_test
 
-all:$(TARGET)
+all:$(TARGET) ../lib/libast.a
 	@echo ast test has been compiled:$(TARGET)
 
 assign_test: assign_test.cpp

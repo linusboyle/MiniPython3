@@ -206,3 +206,18 @@ ReturnValue CompareOperation::exec()
     //return result;
 //}
 
+ReturnValue FunctionCall::exec()
+{
+    auto target=factory.getFunc(id);
+    for(int i=0,n=arg.size();i!=n;++i){
+        target->pushArg(arg[i]);
+    }
+
+    factory.createScope(id);
+
+    ReturnValue result=std::__invoke(*target);
+
+    factory.deleteScope(id);
+
+    return result;
+};

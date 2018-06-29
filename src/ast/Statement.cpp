@@ -264,9 +264,15 @@ ReturnValue If_Statement::exec(){
 //当一个语句块在执行的时候，应该创建一个local scope吗？
 ReturnValue Suite::exec() {
     for(int i=0,n=getChildNumber();i!=n;++i) {
-        auto tmp=getChild(i)->exec();
-        if(tmp.type==RETURN_ERROR||tmp.type==RETURN_BREAK||tmp.type==RETURN_CONTINUE||RETURN_RETURN){
-            return tmp;
+        ReturnValue tmp1=getChild(i)->exec();
+        switch(tmp1.type){
+            case RETURN_ERROR:
+            case RETURN_BREAK:
+            case RETURN_RETURN:
+            case RETURN_CONTINUE:
+                return tmp1;
+            default:
+                break;
         }
     }
     //其余情况均被忽略而同一化
@@ -322,13 +328,22 @@ ReturnValue Continue_Statement::exec(){
     return RETURN_CONTINUE;
 }
 
-//FunctionDefinition_Statement::FunctionDefinition_Statement(std::string& _name,int count,std::string* args_name,std::shared_ptr<Suite> _body):name(_name),argnames(args_name),body(_body),arg_count(count){}
 
 ReturnValue FunctionDefinition_Statement::exec(){
     factory.addFunction(func);
 
     //no check of executing result
     return RETURN_NONETYPE;
+}
+
+FunctionDefinition_Statement::FunctionDefinition_Statement(const std::shared_ptr<Function>& func):func(func){
+}
+
+FunctionDefinition_Statement::FunctionDefinition_Statement(const std::string& id,const std::shared_ptr<Suite>& body,const std::vector<std::shared_ptr<Argument>>& args){
+    func=std::make_shared<Function>(id,body);
+    for(int i=0,n=args.size();i!=n;++i){
+        func->addArg(args[i]);
+    }
 }
 
 Return_Statement::Return_Statement(ReturnValue value):result(value){}

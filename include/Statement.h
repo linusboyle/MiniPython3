@@ -157,18 +157,27 @@ class Continue_Statement:public Statement{
 //TODO
 //after implementing list and tuple...
 //implement *for* loop
+//
 
+
+class Argument;
 class Function;
+
 //a very useless and tedious wrapper
 //should think a better way to represent a function
 class FunctionDefinition_Statement:public Statement{
     public:
         template<class... Args>
-        FunctionDefinition_Statement(const std::string& id,std::shared_ptr<Suite> body,Args... arg):func(std::make_shared<Function>(id,body,arg...)){
+        FunctionDefinition_Statement(const std::string& id,const std::shared_ptr<Suite>& body,Args... arg):func(std::make_shared<Function>(id,body,arg...)){
         }
+        //直接传一个定义好的function
+        FunctionDefinition_Statement(const std::shared_ptr<Function>&);
+        //传一个包含动态参数的vector
+        FunctionDefinition_Statement(const std::string& id,const std::shared_ptr<Suite>& body,const std::vector<std::shared_ptr<Argument>>&);
+
+        ReturnValue exec() override final;
     private:
         std::shared_ptr<Function> func;
-        ReturnValue exec() override final;
 };
 
 class Return_Statement:public Statement{

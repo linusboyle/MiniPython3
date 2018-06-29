@@ -22,8 +22,8 @@ class AstFactory{
     public:
         static AstFactory& getinstance();
 
-        void addStatement(std::shared_ptr<Statement>);
-        void addFunction(std::shared_ptr<Function>);
+        void addStatement(const std::shared_ptr<Statement>&);
+        void addFunction(const std::shared_ptr<Function>&);
         //TODO
         //重构函数实现，采用可变模板传参数
 
@@ -68,6 +68,7 @@ class AstFactory{
         std::stack<std::string> context;
 
         AstFactory();//内置函数放在这里
+
         AstFactory(const AstFactory&)=delete;
         AstFactory(AstFactory&&)=delete;
         AstFactory& operator=(const AstFactory&)=delete;

@@ -40,8 +40,9 @@ const std::string& Function::getID() const{
 
 void Function::pushDefault(){
     for(unsigned int i=index,n=arguments.size();i!=n;++i){
-        if(arguments[i]->defaultValue.type!=RETURN_NONETYPE){
-            factory.setValue(arguments[i]->id,arguments[i]->defaultValue);
+        auto tmp=arguments[i];
+        if(tmp->defaultValue.type!=RETURN_NONETYPE/*默认值应该是具体的可计算类型*/){
+            factory.setValue(tmp->id,tmp->defaultValue);
         }
         else{//只要有一个没有默认值，就无法进行函数
             std::cerr<<"RuntimeError:argument too few for function "<<this->id<<std::endl;
@@ -86,13 +87,16 @@ ReturnValue Function::operator()(){
     auto result=body->exec();
 
     index=0;
-    //_has_explicit=false;
 
     if(result.type==RETURN_RETURN)
         return *(result.true_value);
-    else//没有返回值
+    else
         return result;
 }
 
 Argument::Argument(const std::string& id,const ReturnValue& value):id(id),defaultValue(value){
+}
+
+void Function::addArg(const std::shared_ptr<Argument>& arg){
+    arguments.push_back(arg);
 }

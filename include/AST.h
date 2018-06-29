@@ -6,7 +6,7 @@
 #ifndef ABSTRACT_SYNTAX_TREE_H
     #define ABSTRACT_SYNTAX_TREE_H
 
-    #include "FunctionCall.h"
+    #include "AstFactory.h"
     //that's enough XD
 
     //a strange and stupid template
@@ -16,7 +16,8 @@
     }
 
     #define CREATE(x,y...) std::make_shared<x>(y)
-
+    //#define DEF(y...) std::make_shared<Function>(y)
+    typedef std::vector<ReturnValue> ArgList;
 #endif
 
 //why do you open this file?

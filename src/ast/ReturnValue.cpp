@@ -17,8 +17,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 */
 
 #include "ReturnValue.h"
-#include "Func.h"
-#include <iostream>
+#include "utility.h"
 #include <cmath>
 
 

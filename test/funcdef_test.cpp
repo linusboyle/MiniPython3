@@ -25,15 +25,16 @@ int main(){
     factory.addStatement(def);
 
 
-    std::array<ReturnValue,2> arg={1,2};
+    //arglist 可以动态pushback
+    ArgList arg={1,2};
     std::shared_ptr<Statement> call = CREATE(Expression_Statement,
-                CREATE(FunctionCall<2>,"test",arg
+                CREATE(FunctionCall,"test",arg
                     )
             );
 
     factory.addStatement(call);
 
     DEBUG<<factory.run()<<std::endl;
-
+    DEBUG<<call->exec();
     return 0;
 }

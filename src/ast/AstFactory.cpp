@@ -26,16 +26,30 @@ AstFactory& AstFactory::getinstance() {
 AstFactory::AstFactory(){
     //default to global scope
     context.push("global");
-    table[context.top()]=new SymbolTable();
+    table["global"]=new SymbolTable();
     stats.clear();
     funcs.clear();
+
+    //FIXME
+    //关于模块管理
+    //如果要做这一块的话，这里不能这么直接
+    setValue("__name__","main");
+
+    //TODO
+    //push default function,such as print();
 }
 
-void AstFactory::addStatement(std::shared_ptr<Statement> stat){
+void AstFactory::addStatement(const std::shared_ptr<Statement>& stat){
     stats.push_back(stat);
 }
 
-void AstFactory::addFunction(std::shared_ptr<Function> func){
+void AstFactory::addFunction(const std::shared_ptr<Function>& func){
+    for(int i=0,n=funcs.size();i!=n;++i){
+        if(funcs[i]->getID()==func->getID()){
+            std::cerr<<"RuntimeError:repeatedly define the same function.This Interpreter does not support overload"<<std::endl;
+            exit(1);
+        }
+    }
     funcs.push_back(func);
 }
 
@@ -96,12 +110,14 @@ void AstFactory::deleteRecord(const std::string& id){
         if(table["global"]->getValue(id).type!=RETURN_ERROR)
             table["global"]->deleteRecord(id);
         else{
-            std::cerr<<"Segmental fault:fatal error delete "<<id<<" in context "<<context.top()<<std::endl;
-            exit(1);
+            std::cerr<<"Segmentation fault:fatal error delete "<<id<<" in context "<<context.top()<<std::endl;
+            std::exit(1);
         }
     }
 }
 
+//only local vars here
+//if possible,implement the global statement
 void AstFactory::setValue(const std::string& id,ReturnValue newvalue){
     table[context.top()]->setValue(id,newvalue);
 }
@@ -146,5 +162,5 @@ void AstFactory::deleteScope(const std::string& id){
 
     //abort the local context
     delete table[id];
-    table[id]=nullptr;
+    table[id]=nullptr;//necessary,do not delete this line
 }

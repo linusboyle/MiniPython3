@@ -89,4 +89,15 @@ class CompareOperation:public Expression
         virtual ReturnValue exec() override final;
 };
 
+
+//just a wrapper around callfunc in astfactory
+//do not handle return signal
+class FunctionCall:public Expression{
+    private:
+        std::string id;
+        std::vector<ReturnValue> arg;
+    public:
+        FunctionCall(const std::string& id,const std::vector<ReturnValue>& arg):id(id),arg(arg){};
+        ReturnValue exec() override final;
+};
 #endif
