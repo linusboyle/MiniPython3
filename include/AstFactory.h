@@ -24,10 +24,14 @@ class AstFactory{
 
         void addStatement(const std::shared_ptr<Statement>&);
         void addFunction(const std::shared_ptr<Function>&);
+
         //TODO
         //重构函数实现，采用可变模板传参数
+        //DONE
+        //废弃：改功能由调用本身来完成
 
         const std::shared_ptr<Function>& getFunc(const std::string&);
+
         //template<class... Arg>
         //ReturnValue callFunc(const std::string& id,Arg... arg){
             //for(int i=0,n=funcs.size();i!=n;++i){
@@ -55,6 +59,7 @@ class AstFactory{
 
         void createScope(const std::string&);
         void deleteScope(const std::string&);
+
         int run();
 
         void deleteRecord(const std::string&);
@@ -68,6 +73,9 @@ class AstFactory{
         std::stack<std::string> context;
 
         AstFactory();//内置函数放在这里
+
+
+
 
         AstFactory(const AstFactory&)=delete;
         AstFactory(AstFactory&&)=delete;

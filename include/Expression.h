@@ -20,7 +20,6 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 
 #include "ASTNode.h"
 #include "Operator.h"
-#include <list>
 
 class Expression:public ASTNode
 {
@@ -89,15 +88,30 @@ class CompareOperation:public Expression
         virtual ReturnValue exec() override final;
 };
 
+class Slice:public Expression
+{
+    private:
+        int _beg;
+        int _end;
+        int _step;
+    public:
+        Slice(std::shared_ptr<Expression>&,int,int,int);
+        virtual ReturnValue exec() override;
+};
 
 //just a wrapper around callfunc in astfactory
 //do not handle return signal
+//CHANGED
+//no longer depend on astfactory's call utilities
+//it's now functional class
 class FunctionCall:public Expression{
     private:
         std::string id;
-        std::vector<ReturnValue> arg;
+        std::vector<std::shared_ptr<Expression>> arg;
+        //FIXED
+        //should be able to take any expression as argument
     public:
-        FunctionCall(const std::string& id,const std::vector<ReturnValue>& arg):id(id),arg(arg){};
+        FunctionCall(const std::string& id,std::vector<std::shared_ptr<Expression> >& arg):id(id),arg(arg){};
         ReturnValue exec() override final;
 };
 #endif

@@ -3,7 +3,6 @@
 
 #include "ASTNode.h"
 #include "Expression.h"
-#include <map>
 
 enum number_type
 {
@@ -32,7 +31,7 @@ class String:public Expression
     private:
         std::string literal;
     public:
-        String(std::string);
+        String(const std::string&);
         std::string getString();
         virtual ReturnValue exec() override final;
 };

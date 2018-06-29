@@ -26,7 +26,8 @@ int main(){
 
 
     //arglist 可以动态pushback
-    ArgList arg={1,2};
+    ArgList arg={CREATE(Number,1),CREATE(Number,2)};
+
     std::shared_ptr<Statement> call = CREATE(Expression_Statement,
                 CREATE(FunctionCall,"test",arg
                     )

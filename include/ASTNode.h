@@ -36,6 +36,8 @@ class ASTNode//:public std::enable_shared_from_this<ASTNode>
         //TODO
         //should we change it to binary tree?
         //vector is too wasteful
+        //
+        //no,just so
         std::vector<std::shared_ptr<ASTNode>> childlist;
         //this might be optional,It will be used sometimes to restrict
         int max_child_number=INT_MAX;

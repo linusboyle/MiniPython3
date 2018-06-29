@@ -196,6 +196,41 @@ ReturnValue CompareOperation::exec()
     return true;
 }
 
+Slice::Slice(std::shared_ptr<Expression>& target,int beg,int end,int step):_beg(beg),_end(end),_step(step){
+    add(target);
+}
+
+ReturnValue Slice::exec(){
+    ReturnValue tmp=getChild(0)->exec();
+    switch(tmp.type){
+        //这两种情况实际上应该是不可能发生(funccall已经handle了这两种情况，而其他表达式不可能产生这两种信号)
+        case RETURN_BREAK:
+            return tmp;
+        case RETURN_CONTINUE:
+            return tmp;
+
+        case RETURN_STRING:
+            {
+                unsigned int i=_beg;
+                std::string& _target=tmp.string_value;
+                std::string result;
+
+                //这里的实现并没有考虑越界，一方面是at有检查
+                //另一方面在下界超过长度的情况下会直接返回所有
+                //这是feature
+                while(i<_target.size()&&(int)i<_end){
+                    result+=_target.at(i);
+                    i+=_step;
+                }
+                return result;
+            }
+        //TODO
+        //实际上切片对容器是有效的
+        //所以如果要增加容器支持，则需要在这里进行拓展
+        default:
+            return RETURN_ERROR;
+    }
+}
 //ReturnValue FunctionCall::exec(){
     //auto result=factory.callFunc(name,args);
     ////如果返回的是return信号的话，返回实际的值
@@ -210,14 +245,20 @@ ReturnValue FunctionCall::exec()
 {
     auto target=factory.getFunc(id);
     for(int i=0,n=arg.size();i!=n;++i){
-        target->pushArg(arg[i]);
+        target->pushArg(arg[i]->exec());
     }
 
     factory.createScope(id);
 
+    //will detect default value when invoked
+    //terminate program if argument too few
     ReturnValue result=std::__invoke(*target);
 
     factory.deleteScope(id);
 
+    if(result.type==RETURN_BREAK||result.type==RETURN_CONTINUE){
+        //结束函数调用之后如果有break或者continue，不应该再继续传递上去了
+        return RETURN_ERROR;
+    }
     return result;
 };

@@ -17,7 +17,8 @@
 
     #define CREATE(x,y...) std::make_shared<x>(y)
     //#define DEF(y...) std::make_shared<Function>(y)
-    typedef std::vector<ReturnValue> ArgList;
+    typedef std::vector<std::shared_ptr<Expression>> ArgList;
+
 #endif
 
 //why do you open this file?

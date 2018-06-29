@@ -40,7 +40,7 @@ ReturnValue Number::exec()
     return getFloat();
 }
 
-String::String(std::string value):Expression(0),literal(value){}
+String::String(const std::string& value):Expression(0),literal(value){}
 
 std::string String::getString()
 {
