@@ -67,4 +67,5 @@ void test_zero(double number)
         exit(1);
     }
 }
+
 #endif //FUNC_H

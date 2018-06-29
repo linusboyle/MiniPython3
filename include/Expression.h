@@ -110,8 +110,10 @@ class FunctionCall:public Expression{
         std::vector<std::shared_ptr<Expression>> arg;
         //FIXED
         //should be able to take any expression as argument
+        //DONE
+        //use astnode's vector directly
     public:
-        FunctionCall(const std::string& id,std::vector<std::shared_ptr<Expression> >& arg):id(id),arg(arg){};
+        FunctionCall(const std::string&,std::vector<std::shared_ptr<Expression>>);
         ReturnValue exec() override final;
 };
 #endif

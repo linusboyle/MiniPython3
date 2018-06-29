@@ -77,6 +77,7 @@ class AstFactory{
 
 
 
+        const std::string& SSS(const char*);
 
         AstFactory(const AstFactory&)=delete;
         AstFactory(AstFactory&&)=delete;

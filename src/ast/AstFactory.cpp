@@ -18,6 +18,10 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #include "AstFactory.h"
 #include <iostream>
 
+const std::string& AstFactory::SSS(const char* T){
+    return *(new std::string(T));
+}
+
 AstFactory& AstFactory::getinstance() {
     static AstFactory theinstance;
     return theinstance;

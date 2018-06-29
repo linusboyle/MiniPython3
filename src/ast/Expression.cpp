@@ -241,15 +241,33 @@ ReturnValue Slice::exec(){
     //return result;
 //}
 
+FunctionCall::FunctionCall(const std::string& id,std::vector<std::shared_ptr<Expression>> args):id(id){
+    for(int i=0,n=args.size();i!=n;++i){
+        this->add(args[i]);
+    }
+}
+
 ReturnValue FunctionCall::exec()
 {
     auto target=factory.getFunc(id);
-    for(int i=0,n=arg.size();i!=n;++i){
-        target->pushArg(arg[i]->exec());
+
+    //FIXED
+    //fix the bug of argument not calculated before pushed to heap
+    //
+    //IDEA!!
+    //it works!
+    std::vector<ReturnValue> tmp;
+
+    for(int i=0,n=getChildNumber();i!=n;++i){
+        tmp.push_back(getChild(i)->exec());
     }
 
     factory.createScope(id);
 
+    //terminate if arguments too many
+    for(int i=0,n=tmp.size();i!=n;++i){
+        target->pushArg(tmp[i]);
+    }
     //will detect default value when invoked
     //terminate program if argument too few
     ReturnValue result=std::__invoke(*target);

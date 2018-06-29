@@ -1,7 +1,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include <iostream>
 #include "ReturnValue.h"
 #include "Literal.h"
 
@@ -47,4 +46,5 @@ std::ostream& operator<<(std::ostream& out,const ReturnValue& from)
 }
 
 #define DEBUG std::cout<<"from file "<<__FILE__<<",line "<<__LINE__<<":"
+
 #endif //DEBUG_H
