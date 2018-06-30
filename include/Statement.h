@@ -165,6 +165,9 @@ class Function;
 
 //a very useless and tedious wrapper
 //should think a better way to represent a function
+//
+//IDEA
+//多重函数？
 class FunctionDefinition_Statement:public Statement{
     public:
         template<class... Args>
@@ -175,8 +178,11 @@ class FunctionDefinition_Statement:public Statement{
         //传一个包含动态参数的vector
         FunctionDefinition_Statement(const std::string& id,const std::shared_ptr<Suite>& body,const std::vector<std::shared_ptr<Argument>>&);
 
+        //FIXME
+        //function can be redefed;
         ReturnValue exec() override final;
     private:
+        //only add this to tree when runned
         std::shared_ptr<Function> func;
 };
 
@@ -200,4 +206,17 @@ class Print_Statement:public Statement{
         virtual ReturnValue exec() override final;
 };
 
+class For_Statement:public Statement{
+    public:
+        For_Statement(std::shared_ptr<Name>,std::shared_ptr<Expression>,std::shared_ptr<Suite>,std::shared_ptr<Suite> =nullptr);
+        virtual ReturnValue exec() override final;
+};
+
+//like the print statement ,a built-in statement that is actually a hack method
+//
+class Range_Statement:public Statement{
+    public:
+        Range_Statement(const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&);
+        virtual ReturnValue exec() override final;
+};
 #endif //STATEMENT_H

@@ -15,11 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses.
 */
+
 #ifndef RETURNVALUE_H
 #define RETURNVALUE_H
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 #define DEBUG std::cout<<"from file "<<__FILE__<<",line "<<__LINE__<<":"
 //enumeration of all the possible returntype
@@ -34,10 +36,13 @@ enum _return_type_
     RETURN_BOOLEAN  ,
 
     //these three is for control flow
-    //in common conditions it's the same with error
+    //in common conditions it's the same as error
     RETURN_BREAK    ,
     RETURN_CONTINUE ,
     RETURN_RETURN   ,
+
+    RETURN_TUPLE    ,
+    RETURN_LIST     ,
 };
 
 class ReturnValue
@@ -56,15 +61,19 @@ class ReturnValue
 
         //used when it's a RETURN_RETURN
         ReturnValue* true_value=nullptr;
+        //used both by tuple and list,infact the list and tuple are both fake,being a wrapper around std::vector.
+        //based on the diffence of type,it will allow or not allow inserting
+        std::vector<ReturnValue>* container=nullptr;
         //indicate the type
         enum _return_type_ type=RETURN_NONETYPE;
 
         //all kinds of constructors
         ReturnValue(_return_type_=RETURN_NONETYPE,ReturnValue* value=nullptr);
+        ReturnValue(_return_type_,const std::vector<ReturnValue>&);
         ReturnValue(double);
         ReturnValue(int);
         ReturnValue(bool);
-        //I dont want to take char as input,which will be convert to int
+        //I dont want to take char as input,which will be converted to int
         ReturnValue(char)=delete;
 
         ReturnValue(std::string);
@@ -79,7 +88,7 @@ class ReturnValue
 
         //all kinds of operator overload
         //if the type is not compatible they will throw RETURN_ERROR
-        //
+
         //utility function
         friend bool _same_type(const ReturnValue&,const ReturnValue&);
 
@@ -95,7 +104,6 @@ class ReturnValue
         friend ReturnValue operator~ (const ReturnValue&);
         friend ReturnValue operator<< (const ReturnValue&,const ReturnValue&);
         friend ReturnValue operator>> (const ReturnValue&,const ReturnValue&);
-
 
         //Compare
         friend ReturnValue operator<(const ReturnValue&,const ReturnValue&);

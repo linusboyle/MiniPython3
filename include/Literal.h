@@ -4,6 +4,8 @@
 #include "ASTNode.h"
 #include "Expression.h"
 
+//all of those below is just wrapper around returnvalue
+//they are the literals used in py3
 enum number_type
 {
     INT,
@@ -25,7 +27,7 @@ class Number:public Expression
         virtual ReturnValue exec() override final;
 };
 
-//TODO
+//DONE
 //实现格式化字符串
 class String:public Expression
 {
@@ -63,6 +65,8 @@ enum _name_constant
     TRUE,
     FALSE,
     NONE,
+    EMPTY_TUPLE,
+    EMPTY_LIST,
 };
 
 

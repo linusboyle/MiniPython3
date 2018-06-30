@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "AstFactory.h"
-#include <iostream>
 
 const std::string& AstFactory::SSS(const char* T){
     return *(new std::string(T));
@@ -62,8 +61,11 @@ void AstFactory::addStatement(const std::shared_ptr<Statement>& stat){
 void AstFactory::addFunction(const std::shared_ptr<Function>& func){
     for(int i=0,n=funcs.size();i!=n;++i){
         if(funcs[i]->getID()==func->getID()){
-            std::cerr<<"RuntimeError:repeatedly define the same function.This Interpreter does not support overload"<<std::endl;
-            exit(1);
+            //std::cerr<<"RuntimeError:repeatedly define the same function.This Interpreter does not support overload"<<std::endl;
+            //exit(1);
+            //NOTE
+            //解决了函数重复定义覆盖的问题。原函数就此被弃用
+            funcs[i]=func;
         }
     }
     funcs.push_back(func);

@@ -17,7 +17,6 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "Function.h"
 #include "AstFactory.h"
-#include <iostream>
 
 const std::string& Function::getID() const{
     return id;

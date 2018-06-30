@@ -17,7 +17,6 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "Literal.h"
 #include "AstFactory.h"
-#include <iostream>
 
 Number::Number(int value):Expression(0),int_value(value),type(INT){}
 
@@ -95,6 +94,10 @@ ReturnValue NameConstant::exec()
             return false;
         case NONE:
             return RETURN_NONETYPE;
+        case EMPTY_LIST:
+            return ReturnValue(RETURN_LIST,std::vector<ReturnValue>());
+        case EMPTY_TUPLE:
+            return ReturnValue(RETURN_TUPLE,std::vector<ReturnValue>());
     }
 }
 

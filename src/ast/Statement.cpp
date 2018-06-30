@@ -16,10 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses.
 */
 #include "Statement.h"
-#include <cmath>
-#include <iostream>
 #include "Function.h"
 #include "AstFactory.h"
+#include <cmath>
 
 Statement::~Statement()
 {
@@ -366,4 +365,69 @@ ReturnValue Print_Statement::exec() {
     std::cout<<getChild(0)->exec();
     std::cout<<std::endl;//更改休止符比较困难，就让它是换行吧
     return RETURN_NONETYPE;
+}
+
+For_Statement::For_Statement(std::shared_ptr<Name> target,std::shared_ptr<Expression> range,std::shared_ptr<Suite> body,std::shared_ptr<Suite> orelse){
+    add(target);
+    add(range);
+    add(body);
+    if(orelse){
+        add(orelse);
+    }
+}
+
+ReturnValue For_Statement::exec(){
+    auto target=getChild(0);
+    auto range=getChild(1)->exec();
+    auto body=getChild(2);
+    switch(range.type){
+        case RETURN_TUPLE:
+        case RETURN_LIST:
+            {
+                int n=range.container->size();
+                for(int i=0;i!=n;++i){
+                    std::dynamic_pointer_cast<Name>(target)->setValue(range.container->at(i));
+                    auto result=body->exec();
+                    if(result.type==RETURN_BREAK)
+                        break;
+                    else if(result.type==RETURN_ERROR||result.type==RETURN_RETURN)
+                        return result;
+
+                    std::dynamic_pointer_cast<Name>(target)->deleteRecord();
+                }
+            }
+            break;
+        default:
+            std::cerr<<"RuntimeError:the target cannot be iterated"<<std::endl;
+            exit(1);
+    }
+    //if defined else block
+    if(getChildNumber()==3)
+        return getChild(2)->exec();
+    else
+        return RETURN_NONETYPE;
+}
+
+Range_Statement::Range_Statement(const std::shared_ptr<Expression>& beg,const std::shared_ptr<Expression>& end,const std::shared_ptr<Expression>& step)
+{
+    add(beg);
+    add(end);
+    add(step);
+}
+
+ReturnValue Range_Statement::exec() {
+    auto beg=getChild(0)->exec();
+    auto end=getChild(1)->exec();
+    auto step=getChild(2)->exec();
+    if(beg.type!=RETURN_INT||end.type!=RETURN_INT||step.type!=RETURN_INT){
+        std::cerr<<"RuntimeError:index is not integer"<<std::endl;
+        std::exit(1);
+    }
+    else{
+        std::vector<ReturnValue> result;
+        for(int i=beg.integer_value;i<end.integer_value;i+=step.integer_value){
+            result.push_back(i);
+        }
+        return ReturnValue(RETURN_TUPLE,result);
+    }
 }

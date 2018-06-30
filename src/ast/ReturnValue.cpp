@@ -29,6 +29,17 @@ ReturnValue::ReturnValue(_return_type_ T,ReturnValue* value):type(T)
     }
 }
 
+ReturnValue::ReturnValue(_return_type_ T,const std::vector<ReturnValue>& content){
+    if (T==RETURN_TUPLE||T==RETURN_LIST){
+        container=new std::vector<ReturnValue>(content);
+        type=T;
+    }
+    else{
+        std::cerr<<"RuntimeError::non-compatible type to container"<<std::endl;
+        exit(1);
+    }
+}
+
 //IDEA
 //maybe use init table?
 ReturnValue::ReturnValue(int integer_value):integer_value(integer_value)
@@ -83,6 +94,9 @@ bool ReturnValue::convert2bool() const
             //none is a kind of false
         case RETURN_NONETYPE:
             return false;
+        case RETURN_LIST:
+        case RETURN_TUPLE:
+            return !container->empty();
         default:
             std::cerr<<"RuntimeError:Expected test,but provided non-comparable value;aborting"<<std::endl;
             exit(1);
@@ -103,6 +117,22 @@ ReturnValue operator+ (const ReturnValue& operand1,const ReturnValue& operand2)
                 return ReturnValue(operand1.string_value+operand2.string_value);
             case RETURN_BOOLEAN:
                 return operand1.convert2int()+operand2.convert2int();
+            case RETURN_TUPLE:
+                {
+                    std::vector<ReturnValue> tmp=*operand1.container;
+                    for(int i=0,n=operand2.container->size();i!=n;++i){
+                        tmp.push_back(operand2.container->at(i));
+                    }
+                    return ReturnValue(RETURN_TUPLE,tmp);
+                }
+            case RETURN_LIST:
+                {
+                    std::vector<ReturnValue> tmp=*operand1.container;
+                    for(int i=0,n=operand2.container->size();i!=n;++i){
+                        tmp.push_back(operand2.container->at(i));
+                    }
+                    return ReturnValue(RETURN_LIST,tmp);
+                }
             default:
                 return RETURN_ERROR;
         }
@@ -153,6 +183,7 @@ ReturnValue operator* (const ReturnValue& operand1,const ReturnValue& operand2)
                 return RETURN_ERROR;
         }
     }
+    //容器和int相乘忽略
     else
         return RETURN_ERROR;
 }
@@ -449,6 +480,26 @@ std::ostream& operator<<(std::ostream& out,const ReturnValue& from)
                 out<<from.true_value;
             }
             return out;
+        case RETURN_TUPLE:
+            {
+                out<<'(';
+                int n=from.container->size();
+                for(int i=0;i!=n-1;i++){
+                    out<<from.container->at(i)<<',';
+                }
+                out<<from.container->at(n)<<')';
+                return out;
+            }
+        case RETURN_LIST:
+            {
+                out<<'[';
+                int n=from.container->size();
+                for(int i=0;i!=n-1;i++){
+                    out<<from.container->at(i)<<',';
+                }
+                out<<from.container->at(n)<<']';
+                return out;
+            }
         default:
             return out;
     }

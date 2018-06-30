@@ -88,14 +88,12 @@ class CompareOperation:public Expression
         virtual ReturnValue exec() override final;
 };
 
+//FIXME
+//replace int with any expression that emit int
 class Slice:public Expression
 {
-    private:
-        int _beg;
-        int _end;
-        int _step;
     public:
-        Slice(std::shared_ptr<Expression>&,int,int,int);
+        Slice(const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&);
         virtual ReturnValue exec() override;
 };
 

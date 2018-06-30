@@ -196,12 +196,26 @@ ReturnValue CompareOperation::exec()
     return true;
 }
 
-Slice::Slice(std::shared_ptr<Expression>& target,int beg,int end,int step):_beg(beg),_end(end),_step(step){
+Slice::Slice(const std::shared_ptr<Expression>& target,const std::shared_ptr<Expression>& beg,const std::shared_ptr<Expression>& end,const std::shared_ptr<Expression>& step){
     add(target);
+    add(beg);
+    add(end);
+    add(step);
 }
 
 ReturnValue Slice::exec(){
     ReturnValue tmp=getChild(0)->exec();
+    ReturnValue beg=getChild(1)->exec();
+    ReturnValue end=getChild(2)->exec();
+    ReturnValue step=getChild(3)->exec();
+
+    if(beg.type!=RETURN_INT||end.type!=RETURN_INT||step.type!=RETURN_INT){
+        std::cerr<<"RuntimeError:index not integer"<<std::endl;
+        std::exit(1);
+    }
+    int _beg=beg.integer_value;
+    int _end=end.integer_value;
+    int _step=step.integer_value;
     switch(tmp.type){
         //这两种情况实际上应该是不可能发生(funccall已经handle了这两种情况，而其他表达式不可能产生这两种信号)
         case RETURN_BREAK:
@@ -211,14 +225,14 @@ ReturnValue Slice::exec(){
 
         case RETURN_STRING:
             {
-                unsigned int i=_beg;
+                int i=_beg;
                 std::string& _target=tmp.string_value;
                 std::string result;
 
                 //这里的实现并没有考虑越界，一方面是at有检查
                 //另一方面在下界超过长度的情况下会直接返回所有
                 //这是feature
-                while(i<_target.size()&&(int)i<_end){
+                while(i<_end){
                     result+=_target.at(i);
                     i+=_step;
                 }
