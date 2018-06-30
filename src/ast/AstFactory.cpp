@@ -52,6 +52,22 @@ AstFactory::AstFactory(){
             std::make_shared<Argument>("a")
     );
     addFunction(print);
+
+    std::shared_ptr<Function> range=std::make_shared<Function>("range",
+            std::make_shared<Suite>(
+                std::make_shared<Return_Statement>(
+                    std::make_shared<Range>(
+                        std::make_shared<Name>("a"),
+                        std::make_shared<Name>("b"),
+                        std::make_shared<Name>("c")
+                    )
+                )
+            ),
+            std::make_shared<Argument>("a"),
+            std::make_shared<Argument>("b"),
+            std::make_shared<Argument>("c",1)//默认是1,代表的是步长
+    );
+    addFunction(range);
 }
 
 void AstFactory::addStatement(const std::shared_ptr<Statement>& stat){

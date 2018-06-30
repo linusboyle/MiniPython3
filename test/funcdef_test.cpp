@@ -29,6 +29,7 @@ int main(){
     //arglist 可以动态pushback
     ArgList arg={CREATE(Number,1),CREATE(Number,2)};
 
+    //test(1,2);
     std::shared_ptr<Statement> call = CREATE(Expression_Statement,
                 CREATE(FunctionCall,"test",arg
                     )
@@ -43,13 +44,16 @@ int main(){
      * print(a)
      */
 
+    //global a=1;
     auto assign=CREATE(Assign_Statement,CREATE(Number,1),CREATE(Name,"a"));
+
     auto call2=CREATE(Expression_Statement,CREATE(FunctionCall,
                     "print",ArgList({
                             CREATE(Name,"a")
                         })
                 )
             );
+
     factory.addStatement(assign);
     factory.addStatement(call2);
 

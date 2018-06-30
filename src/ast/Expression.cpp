@@ -163,7 +163,7 @@ ReturnValue CompareOperation::exec()
    int iter_left=0,size=getChildNumber();
     while(iter_left<size-1)
     {
-        ReturnValue result;
+        ReturnValue result=RETURN_NONETYPE;
         switch (op)
         {
             case EQ:
@@ -290,7 +290,38 @@ ReturnValue FunctionCall::exec()
 
     if(result.type==RETURN_BREAK||result.type==RETURN_CONTINUE){
         //结束函数调用之后如果有break或者continue，不应该再继续传递上去了
+        //因为函数内部的东西不应该传递到外部作用域
         return RETURN_ERROR;
     }
-    return result;
+    //return已经被函数本身截获并且转换过了
+    //这一步多此一举
+    //else if(result.type==RETURN_RETURN){
+        //return result.true_value;
+    //}
+    else
+        return result;
 };
+
+Range::Range(const std::shared_ptr<Expression>& beg,const std::shared_ptr<Expression>& end,const std::shared_ptr<Expression>& step)
+{
+    add(beg);
+    add(end);
+    add(step);
+}
+
+ReturnValue Range::exec() {
+    auto beg=getChild(0)->exec();
+    auto end=getChild(1)->exec();
+    auto step=getChild(2)->exec();
+    if(beg.type!=RETURN_INT||end.type!=RETURN_INT||step.type!=RETURN_INT){
+        std::cerr<<"RuntimeError:index is not integer"<<std::endl;
+        std::exit(1);
+    }
+    else{
+        std::vector<ReturnValue> result;
+        for(int i=beg.integer_value;i<end.integer_value;i+=step.integer_value){
+            result.push_back(i);
+        }
+        return ReturnValue(RETURN_TUPLE,result);
+    }
+}

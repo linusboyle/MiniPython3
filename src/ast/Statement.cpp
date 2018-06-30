@@ -114,7 +114,7 @@ ReturnValue AugAssign_Statement::exec()
     auto right=getChild(1)->exec();
     auto left=target->exec();
 
-    ReturnValue tmp;
+    ReturnValue tmp=RETURN_NONETYPE;
 
     //NOTE
     //if any error occurs,the assignment operation will not be carried out~
@@ -346,15 +346,18 @@ FunctionDefinition_Statement::FunctionDefinition_Statement(const std::string& id
     }
 }
 
-Return_Statement::Return_Statement(ReturnValue value):result(value){}
+Return_Statement::Return_Statement(const std::shared_ptr<Expression>& value){
+    add(value);
+}
 
 //return nothing,just stop the function
 Return_Statement::Return_Statement(){
-    result=RETURN_NONETYPE;
+    add(std::make_shared<NameConstant>(NONE));
 }
 
 ReturnValue Return_Statement::exec(){
-    return ReturnValue(RETURN_RETURN,&result);
+    ReturnValue tmp=getChild(0)->exec();
+    return ReturnValue(RETURN_RETURN,tmp);
 }
 
 Print_Statement::Print_Statement(std::shared_ptr<Expression> target){
@@ -402,32 +405,8 @@ ReturnValue For_Statement::exec(){
             exit(1);
     }
     //if defined else block
-    if(getChildNumber()==3)
-        return getChild(2)->exec();
+    if(getChildNumber()==4)
+        return getChild(3)->exec();
     else
         return RETURN_NONETYPE;
-}
-
-Range_Statement::Range_Statement(const std::shared_ptr<Expression>& beg,const std::shared_ptr<Expression>& end,const std::shared_ptr<Expression>& step)
-{
-    add(beg);
-    add(end);
-    add(step);
-}
-
-ReturnValue Range_Statement::exec() {
-    auto beg=getChild(0)->exec();
-    auto end=getChild(1)->exec();
-    auto step=getChild(2)->exec();
-    if(beg.type!=RETURN_INT||end.type!=RETURN_INT||step.type!=RETURN_INT){
-        std::cerr<<"RuntimeError:index is not integer"<<std::endl;
-        std::exit(1);
-    }
-    else{
-        std::vector<ReturnValue> result;
-        for(int i=beg.integer_value;i<end.integer_value;i+=step.integer_value){
-            result.push_back(i);
-        }
-        return ReturnValue(RETURN_TUPLE,result);
-    }
 }

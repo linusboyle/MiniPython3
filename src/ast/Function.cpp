@@ -87,6 +87,7 @@ ReturnValue Function::operator()(){
 
     index=0;
 
+    //只处理return信号
     if(result.type==RETURN_RETURN)
         return *(result.true_value);
     else

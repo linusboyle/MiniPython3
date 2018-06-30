@@ -94,7 +94,7 @@ class Slice:public Expression
 {
     public:
         Slice(const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&);
-        virtual ReturnValue exec() override;
+        virtual ReturnValue exec() override final;
 };
 
 //just a wrapper around callfunc in astfactory
@@ -105,7 +105,6 @@ class Slice:public Expression
 class FunctionCall:public Expression{
     private:
         std::string id;
-        std::vector<std::shared_ptr<Expression>> arg;
         //FIXED
         //should be able to take any expression as argument
         //DONE
@@ -113,5 +112,13 @@ class FunctionCall:public Expression{
     public:
         FunctionCall(const std::string&,std::vector<std::shared_ptr<Expression>>);
         ReturnValue exec() override final;
+};
+
+
+//like the print statement ,a built-in statement that is actually a hack method
+class Range:public Expression{
+    public:
+        Range(const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&);
+        virtual ReturnValue exec() override final;
 };
 #endif

@@ -22,6 +22,7 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #include <string>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #define DEBUG std::cout<<"from file "<<__FILE__<<",line "<<__LINE__<<":"
 //enumeration of all the possible returntype
@@ -60,19 +61,22 @@ class ReturnValue
         bool boolean_value=false;
 
         //used when it's a RETURN_RETURN
-        ReturnValue* true_value=nullptr;
+        std::shared_ptr<ReturnValue>true_value=nullptr;
         //used both by tuple and list,infact the list and tuple are both fake,being a wrapper around std::vector.
         //based on the diffence of type,it will allow or not allow inserting
-        std::vector<ReturnValue>* container=nullptr;
+        std::shared_ptr<std::vector<ReturnValue>> container=nullptr;
         //indicate the type
         enum _return_type_ type=RETURN_NONETYPE;
 
         //all kinds of constructors
-        ReturnValue(_return_type_=RETURN_NONETYPE,ReturnValue* value=nullptr);
+        ReturnValue();
+        ReturnValue(_return_type_);
+        ReturnValue(_return_type_,const ReturnValue& value);
         ReturnValue(_return_type_,const std::vector<ReturnValue>&);
         ReturnValue(double);
         ReturnValue(int);
         ReturnValue(bool);
+        //ReturnValue(const ReturnValue&);
         //I dont want to take char as input,which will be converted to int
         ReturnValue(char)=delete;
 

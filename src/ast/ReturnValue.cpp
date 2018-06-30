@@ -20,18 +20,21 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #include "utility.h"
 #include <cmath>
 
+ReturnValue::ReturnValue(_return_type_ T):type(T){}
 
-ReturnValue::ReturnValue(_return_type_ T,ReturnValue* value):type(T)
+ReturnValue::ReturnValue():ReturnValue(RETURN_NONETYPE){}
+
+ReturnValue::ReturnValue(_return_type_ T,const ReturnValue& value):type(T)
 {
     if(T==RETURN_RETURN)
     {
-        true_value=value;
+        true_value=std::make_shared<ReturnValue>(value);
     }
 }
 
 ReturnValue::ReturnValue(_return_type_ T,const std::vector<ReturnValue>& content){
     if (T==RETURN_TUPLE||T==RETURN_LIST){
-        container=new std::vector<ReturnValue>(content);
+        container=std::make_shared<std::vector<ReturnValue>>(content);
         type=T;
     }
     else{
@@ -142,9 +145,14 @@ ReturnValue operator+ (const ReturnValue& operand1,const ReturnValue& operand2)
 }
 
 ReturnValue::~ReturnValue(){
-    if(true_value){
-        delete true_value;
-    }
+    //if(true_value){
+        //delete true_value;
+        //true_value=nullptr;
+    //}
+    //if(container){
+        //delete container;
+        //container=nullptr;
+    //}
 }
 
 ReturnValue operator- (const ReturnValue& operand1,const ReturnValue& operand2)
@@ -505,3 +513,33 @@ std::ostream& operator<<(std::ostream& out,const ReturnValue& from)
     }
 }
 
+//to avoid memory leak
+//if not working,I have to use smart pointer :-/
+//ReturnValue::ReturnValue(const ReturnValue& from){
+    //this->type=from.type;
+    //switch(from.type){
+        //case RETURN_INT:
+            //this->integer_value=from.integer_value;
+            //break;
+        //case RETURN_STRING:
+            //this->string_value=from.string_value;
+            //break;
+        //case RETURN_BOOLEAN:
+            //this->boolean_value=from.boolean_value;
+            //break;
+        //case RETURN_FLOAT:
+            //double_value=from.double_value;
+            //break;
+        //case RETURN_NONETYPE:
+        //case RETURN_ERROR:
+        //case RETURN_BREAK:
+        //case RETURN_CONTINUE:
+        //case RETURN_RETURN:
+            //true_value=new ReturnValue(*from.true_value);//key line
+            //break;
+        //case RETURN_TUPLE:
+        //case RETURN_LIST:
+            //container=new std::vector<ReturnValue>(*from.container);
+            //break;
+    //}
+//}

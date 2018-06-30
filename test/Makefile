@@ -1,6 +1,6 @@
 .PHONY:clean
 
-TARGET=assign_test ast_test create_test boolean_test calc_test condition_test If_test while_test funcdef_test
+TARGET=assign_test ast_test create_test boolean_test calc_test condition_test If_test while_test funcdef_test container_test
 
 all:$(TARGET) ../lib/libast.a
 	@echo ast test has been compiled:$(TARGET)
@@ -31,6 +31,9 @@ while_test: while_test.cpp
 
 funcdef_test: funcdef_test.cpp
 	$(CXX) $(CFLAGS) funcdef_test.cpp -o funcdef_test  -L$(LIBPATH) -l:libast.a
+
+container_test: container_test.cpp
+	$(CXX) $(CFLAGS) container_test.cpp -o container_test  -L$(LIBPATH) -l:libast.a
 
 clean:
 	rm $(TARGET)

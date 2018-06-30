@@ -189,10 +189,8 @@ class FunctionDefinition_Statement:public Statement{
 class Return_Statement:public Statement{
     public:
         Return_Statement();
-        Return_Statement(ReturnValue value);
+        Return_Statement(const std::shared_ptr<Expression>& value);
         ReturnValue exec() override final;
-    private:
-        ReturnValue result;
 };
 
 //a built-in statement,but since we are building python3,it should never be used
@@ -212,11 +210,4 @@ class For_Statement:public Statement{
         virtual ReturnValue exec() override final;
 };
 
-//like the print statement ,a built-in statement that is actually a hack method
-//
-class Range_Statement:public Statement{
-    public:
-        Range_Statement(const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&,const std::shared_ptr<Expression>&);
-        virtual ReturnValue exec() override final;
-};
 #endif //STATEMENT_H
