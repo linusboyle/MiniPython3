@@ -18,11 +18,12 @@ int main(){
 	int num_int;
 	double num_double;
 	string str;
-	string SymbolToString[61]
+	string SymbolToString[68]
 	{
 		"nul",               "ident",               "number_int",       "number_double",       "str",
 
-		"plus",             "minus",             "times",                    "slash",  
+		"plus",             "minus",             "times",                    "slash",                    "lmove",
+		"rmove",
 
 		"false_py",     "true_py",          "none",                     "break_py",           "continue_py",  
 		"for_py",         "while_py",       "def",                        "return_py",           "if_py",
@@ -35,7 +36,8 @@ int main(){
 		"percent",       "hash",               "at",                           "tilde",                      "becomes",
 		"neq",               "lss",                   "leq",                         "gtr",                         "geq",
 		"eql",                "lparen",            "rparen",                  "comma",                "semicolon",
-		"caret",             "period",           "colon",                    "tab"                                           
+		"caret",             "period",           "colon",                    "tab",                         "lsqr",
+		"rsqr"                "newline"         "indent"                    "dedent"
 	};
 
 

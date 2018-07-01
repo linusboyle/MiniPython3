@@ -15,6 +15,9 @@ using namespace std;
 Scanner::Scanner(){
 	cout<<"Scanner constructing...";
 
+	/*设置tab记数栈*/
+	tab_counter.push_back(0);
+
 	/*设置单字符符号*/
 	ssym=new Symbol[256];
 	ssym['+']=Symbol::plus;
@@ -39,6 +42,9 @@ Scanner::Scanner(){
 	ssym['.']=Symbol::period;
 	ssym[':']=Symbol::colon;
 	ssym['\t']=Symbol::tab;
+	ssym['[']=Symbol::lsqr;
+	ssym[']']=Symbol::rsqr;
+	ssym['\n']=Symbol::newline;
 
 	/*设置保留字列表，用于查找*/
 	word=new string[Keyword_Symbol_number]{"False", "None", "True",  "and", "as", "assert",
@@ -110,6 +116,7 @@ Scanner::Scanner(istream& input) : Scanner(){
 
 
 void Scanner::get_char(){
+	int tab_check=0;//用作新行tab数检查
 	try{
 		if(cc==ll){
 			line="";
@@ -118,6 +125,24 @@ void Scanner::get_char(){
 				if(in.getline(buffer, 256)){
 					line.assign(buffer);
 					line+="\n";
+					//去除tab空行以及tab注释的情况
+					int i=0; bool check=false;
+					while(line[i]!='\n'&&line[i]!='#'){
+						if(isalnum(line[i])){
+							check=true;
+							break;
+						}
+						i++;
+					}
+					if(!check) line="";//end
+					else{    
+						//前置tab记数
+						int j=0;
+						while(line[j]=='\t') j++;
+						line=line.substr(j, line.length()-j);
+						//end
+						tab_check=check_tab(j);
+					}
 				}else{
 					cout<<"Scanner: No more scripts."<<endl;
 					in.clear();
@@ -129,6 +154,15 @@ void Scanner::get_char(){
 		}
 	}catch(...){
 		throw "#Errors! Scanner::get_char()#\n";
+	}
+	//tab数记录
+	if(tab_check==1){//tab进
+		ch=-128;
+		return;
+	}
+	else if(tab_check<0){//tab回
+		ch=-128-tab_check;//记录回复的层数
+		return;
 	}
 	if(ll!=0){
 		ch=line[cc];
@@ -143,8 +177,19 @@ void Scanner::get_char(){
 
 
 void Scanner::get_sym(){
-	while(ch==' '||ch=='\n')     //忽略空格和换行，查找词头
-		get_char();
+	//如果由多个待返回的dedent，先返回
+	if(tab_back>0){
+		tab_back--;
+		return;
+	}
+	while(ch==' '/*||ch=='\n'*/||ch=='#'){     //忽略空格以及注释，查找词头
+		if(ch!='#') get_char();
+		else{
+			cc=ll;
+			ch='\n';
+			break;
+		}
+	}
 	if(is_empty){return;}
 	else if((ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z')||(ch=='_')){
 		check_keyword_or_ident();     //关键字或标识符
@@ -154,6 +199,17 @@ void Scanner::get_sym(){
 	}
 	else if(ch=='\''||ch=='\"'){
 		check_str();     //字符串
+	}
+	else if(ch==-128){//处理indent
+		sym=Symbol::indent;
+		id="indent";
+		ch=' ';
+	}
+	else if(ch>=-127&&ch<0){//处理dedent
+		sym=Symbol::dedent;
+		id="dedent";
+		tab_back=ch+127;
+		ch=' ';
 	}
 	else {
 		check_operator();     //操作符
@@ -203,7 +259,7 @@ void Scanner::check_number(){
 		if(ch=='.') dot+=1;
 	}while((ch>='0'&&ch<='9')||(ch=='.'&&dot<2));
 	//检查数值语法
-	bool not_number_rule=(tmp[0]=='0'&&tmp[1]!='.')||(tmp[tmp.length()-1]=='.');
+	bool not_number_rule=(tmp[0]=='0'&&tmp[1]!='.'&&tmp.length()!=1)||(tmp[tmp.length()-1]=='.');
 	if(not_number_rule){
 		cout<<"SyntaxError: invalid token"<<endl;
 		exit(1);
@@ -275,21 +331,31 @@ void Scanner::check_str(){
 
 void Scanner::check_operator(){
 	switch(ch){
-	case '<':             //小于或者小于等于
+	case '<':             //小于或者小于等于或左移运算
 		get_char();
 		if(ch=='='){
 			sym=Symbol::leq;
 			id="<=";
+			ch=' ';
+		}else if(ch=='<'){
+			sym=Symbol::lmove;
+			id="<<";
+			ch=' ';
 		}else{
 			sym=Symbol::lss;
 			id="<";
 		}
 		break;
-	case '>':            //大于或大于等于
+	case '>':            //大于或大于等于或右移运算
 		get_char();
 		if(ch=='='){
 			sym=Symbol::geq;
 			id=">=";
+			ch=' ';
+		}else if(ch=='>'){
+			sym=Symbol::rmove;
+			id=">>";
+			ch=' ';
 		}else{
 			sym=Symbol::gtr;
 			id=">";
@@ -300,6 +366,7 @@ void Scanner::check_operator(){
 		if(ch=='='){
 			sym=Symbol::neq;
 			id="!=";
+			ch=' ';
 		}else{
 			sym=Symbol::nul;
 			id="!";
@@ -310,6 +377,7 @@ void Scanner::check_operator(){
 		if(ch=='='){
 			sym=Symbol::eql;
 			id="==";
+			ch=' ';
 		}else{
 			sym=Symbol::becomes;
 			id="=";
@@ -318,6 +386,7 @@ void Scanner::check_operator(){
 	default:          //其他的单字符
 		sym=ssym[ch];
 		if(ch=='\t') id="\\t";
+		else if(ch=='\n') id="\\n";
 		else{
 			id="";
 			id.push_back(ch);
@@ -329,13 +398,37 @@ void Scanner::check_operator(){
 
 
 
+int Scanner::check_tab(int tab_num){
+	if(tab_num>tab_counter.back()){
+		tab_counter.push_back(tab_num);
+		return 1;  //indent
+	}
+	else if(tab_num==tab_counter.back()){
+		return 0;  //do nothing
+	}
+	else if(tab_num<tab_counter.back()/*&&tab_num==tab_counter[tab_counter.size()-2]*/){
+		int ret=0;
+		while(tab_counter.back()!=tab_num){
+			tab_counter.pop_back();
+			ret++;
+		}
+		return -ret;  //dedent
+	}
+	else {
+		cout<<"#tab error!#"<<endl;
+		exit(1);
+	}  //wrong
+}
+
+
+
 void Scanner::stream_input(istream& input){
 	//用于交互式编程时的即时输入
 	is_empty=false;
 	ch=' ';
-	string tmp;
-	input>>tmp;
-	in<<tmp;
+	char tmp[256];
+	input.getline(tmp,256);
+	in<<tmp<<'\n';
 }
 
 
