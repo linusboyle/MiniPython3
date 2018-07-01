@@ -20,7 +20,7 @@ int main(){
 	int num_int;
 	double num_double;
 	string str;
-	string SymbolToString[65]
+	string SymbolToString[66]
 	{
 		"nul",               "ident",               "number_int",       "number_double",       "str",
 
@@ -39,7 +39,7 @@ int main(){
 		"neq",               "lss",                   "leq",                         "gtr",                         "geq",
 		"eql",                "lparen",            "rparen",                  "comma",                "semicolon",
 		"caret",             "period",           "colon",                    "tab",                         "lsqr",
-		"rsqr"
+		"rsqr",               "newline"
 	};
 
 	while(!scanner.return_flag()){

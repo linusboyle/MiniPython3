@@ -37,7 +37,7 @@ int main(){
 		"neq",               "lss",                   "leq",                         "gtr",                         "geq",
 		"eql",                "lparen",            "rparen",                  "comma",                "semicolon",
 		"caret",             "period",           "colon",                    "tab",                         "lsqr",
-		"rsqr"           
+		"rsqr"                "newline"
 	};
 
 

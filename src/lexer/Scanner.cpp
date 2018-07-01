@@ -41,6 +41,7 @@ Scanner::Scanner(){
 	ssym['\t']=Symbol::tab;
 	ssym['[']=Symbol::lsqr;
 	ssym[']']=Symbol::rsqr;
+	ssym['\n']=Symbol::newline;
 
 	/*设置保留字列表，用于查找*/
 	word=new string[Keyword_Symbol_number]{"False", "None", "True",  "and", "as", "assert",
@@ -155,11 +156,12 @@ void Scanner::get_char(){
 
 
 void Scanner::get_sym(){
-	while(ch==' '||ch=='\n'||ch=='#'){     //忽略空格和换行以及注释，查找词头
+	while(ch==' '/*||ch=='\n'*/||ch=='#'){     //忽略空格以及注释，查找词头
 		if(ch!='#') get_char();
 		else{
 			cc=ll;
-			ch=' ';
+			ch='\n';
+			break;
 		}
 	}
 	if(is_empty){return;}
@@ -347,6 +349,7 @@ void Scanner::check_operator(){
 	default:          //其他的单字符
 		sym=ssym[ch];
 		if(ch=='\t') id="\\t";
+		else if(ch=='\n') id="\\n";
 		else{
 			id="";
 			id.push_back(ch);
