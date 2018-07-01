@@ -101,50 +101,50 @@ ReturnValue NameConstant::exec()
     }
 }
 
-Formatted_String::Formatted_String(const std::string& base,std::vector<std::shared_ptr<Expression>>& _value):base_string(base){
-    for(int i=0,n=_value.size();i!=n;++i){
-        this->add(_value[i]);
-    }
-}
+//Formatted_String::Formatted_String(const std::string& base,std::vector<std::shared_ptr<Expression>>& _value):base_string(base){
+    //for(int i=0,n=_value.size();i!=n;++i){
+        //this->add(_value[i]);
+    //}
+//}
 
-ReturnValue Formatted_String::exec() {
-    std::string result=base_string;
-    for(int i=0,n=getChildNumber();i!=n;++i){
-        ReturnValue sub=getChild(i)->exec();
+//ReturnValue Formatted_String::exec() {
+    //std::string result=base_string;
+    //for(int i=0,n=getChildNumber();i!=n;++i){
+        //ReturnValue sub=getChild(i)->exec();
 
-        std::string::size_type m=result.find("%");
-        if(m==std::string::npos){
-            std::cerr<<"RuntimeError:too many arguments for formatted string "<<std::endl;
-            exit(1);
-        }
+        //std::string::size_type m=result.find("%");
+        //if(m==std::string::npos){
+            //std::cerr<<"RuntimeError:too many arguments for formatted string "<<std::endl;
+            //exit(1);
+        //}
 
-        //如果参数少于指定的%数
-        //没关系，照常输出就行
-        switch(sub.type){
-            case RETURN_STRING:
-                {
-                    if(result.at(m+1)=='s'){
-                        result.replace(m,2,sub.string_value);
-                    }
-                }
-            case RETURN_INT:
-                {
-                    if(result.at(m+1)=='d'){
-                        result.replace(m,2,std::to_string(sub.integer_value));
-                    }
-                }
-            case RETURN_FLOAT:
-                {
-                    if(result.at(m+1)=='f'){
-                        result.replace(m,2,std::to_string(sub.double_value));
-                    }
-                }
-            default:
-                {
-                    std::cerr<<"RuntimeError:argument cannot match the format of string"<<std::endl;
-                    exit(1);
-                }
-        }
-    }
-    return result;
-}
+        ////如果参数少于指定的%数
+        ////没关系，照常输出就行
+        //switch(sub.type){
+            //case RETURN_STRING:
+                //{
+                    //if(result.at(m+1)=='s'){
+                        //result.replace(m,2,sub.string_value);
+                    //}
+                //}
+            //case RETURN_INT:
+                //{
+                    //if(result.at(m+1)=='d'){
+                        //result.replace(m,2,std::to_string(sub.integer_value));
+                    //}
+                //}
+            //case RETURN_FLOAT:
+                //{
+                    //if(result.at(m+1)=='f'){
+                        //result.replace(m,2,std::to_string(sub.double_value));
+                    //}
+                //}
+            //default:
+                //{
+                    //std::cerr<<"RuntimeError:argument cannot match the format of string"<<std::endl;
+                    //exit(1);
+                //}
+        //}
+    //}
+    //return result;
+//}

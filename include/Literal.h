@@ -39,14 +39,14 @@ class String:public Expression
         virtual ReturnValue exec() override final;
 };
 
-class Formatted_String:public Expression{
-    private:
-        std::string base_string;
-    public:
-        //I will not use template anymore,just tired of it
-        Formatted_String(const std::string&,std::vector<std::shared_ptr<Expression>>&);
-        virtual ReturnValue exec() override final;
-};
+//class Formatted_String:public Expression{
+    //private:
+        //std::string base_string;
+    //public:
+        ////I will not use template anymore,just tired of it
+        //Formatted_String(const std::string&,std::vector<std::shared_ptr<Expression>>&);
+        //virtual ReturnValue exec() override final;
+//};
 
 //Name is visible in current context and global context
 class Name:public Expression

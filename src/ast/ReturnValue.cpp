@@ -297,6 +297,48 @@ ReturnValue operator^ (const ReturnValue& operand1,const ReturnValue& operand2)
 //FIXED
 ReturnValue operator% (const ReturnValue& operand1,const ReturnValue& operand2)
 {
+    if(operand1.type==RETURN_STRING&&operand2.type==RETURN_TUPLE){
+        std::string result=operand1.string_value;
+        auto vec=operand2.container;
+        for(int i=0,n=vec->size();i!=n;++i){
+            ReturnValue sub=vec->at(i);
+
+            std::string::size_type m=result.find("%");
+            if(m==std::string::npos){
+                std::cerr<<"RuntimeError:too many arguments for formatted string "<<std::endl;
+                exit(1);
+            }
+
+            //如果参数少于指定的%数
+            //没关系，照常输出就行
+            switch(sub.type){
+                case RETURN_STRING:
+                    {
+                        if(result.at(m+1)=='s'){
+                            result.replace(m,2,sub.string_value);
+                        }
+                    }
+                case RETURN_INT:
+                    {
+                        if(result.at(m+1)=='d'){
+                            result.replace(m,2,std::to_string(sub.integer_value));
+                        }
+                    }
+                case RETURN_FLOAT:
+                    {
+                        if(result.at(m+1)=='f'){
+                            result.replace(m,2,std::to_string(sub.double_value));
+                        }
+                    }
+                default:
+                    {
+                        std::cerr<<"RuntimeError:argument cannot match the format of string"<<std::endl;
+                        exit(1);
+                    }
+            }
+        }
+        return result;
+    }
     double left,right;
     switch(operand1.type)
     {
