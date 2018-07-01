@@ -13,6 +13,10 @@ class Argument:public ASTNode{
         friend class Function;
     public:
         Argument(const std::string&,const ReturnValue& =RETURN_NONETYPE);
+        //just nothing
+        ReturnValue exec(){
+            return RETURN_NONETYPE;
+        }
 };
 
 class Function{

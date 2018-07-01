@@ -6,10 +6,18 @@ export
 
 .PHONY:clean
 
-all:ast
+all:ast gui
 
 ast:
 	make -C src/ast
 
+gui:
+	cd src/gui
+	qmake
+	make
+	cd $ROOT
+
 clean:
 	make clean -C src/ast
+	make clean -C src/gui
+	rm src/gui/Makefile
