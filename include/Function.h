@@ -6,7 +6,7 @@
 
 //代表一个参数
 //名称必须，默认值可选，直接使用create宏即可
-class Argument{
+class Argument:public ASTNode{
     private:
         const std::string id;
         const ReturnValue defaultValue;

@@ -73,6 +73,7 @@ class ReturnValue
         ReturnValue(_return_type_);
         ReturnValue(_return_type_,const ReturnValue& value);
         ReturnValue(_return_type_,const std::vector<ReturnValue>&);
+
         ReturnValue(double);
         ReturnValue(int);
         ReturnValue(bool);
