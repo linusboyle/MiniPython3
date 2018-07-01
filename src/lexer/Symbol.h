@@ -21,7 +21,7 @@ enum Symbol{
 	neq,               lss,                   leq,                         gtr,                         geq,
 	eql,                lparen,            rparen,                  comma,                semicolon,
 	caret,             period,           colon,                    tab,                        lsqr,
-	rsqr,               newline           //其他字符
+	rsqr,               newline,         indent,                  dedent //其他字符
 };
 //Keyword_Symbol_number=33
 

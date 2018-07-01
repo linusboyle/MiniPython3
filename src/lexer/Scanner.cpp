@@ -15,6 +15,9 @@ using namespace std;
 Scanner::Scanner(){
 	cout<<"Scanner constructing...";
 
+	/*设置tab记数栈*/
+	tab_counter.push_back(0);
+
 	/*设置单字符符号*/
 	ssym=new Symbol[256];
 	ssym['+']=Symbol::plus;
@@ -113,6 +116,7 @@ Scanner::Scanner(istream& input) : Scanner(){
 
 
 void Scanner::get_char(){
+	int tab_check=0;//用作新行tab数检查
 	try{
 		if(cc==ll){
 			line="";
@@ -130,7 +134,15 @@ void Scanner::get_char(){
 						}
 						i++;
 					}
-					if(!check) line="";//
+					if(!check) line="";//end
+					else{    
+						//前置tab记数
+						int j=0;
+						while(line[j]=='\t') j++;
+						line=line.substr(j, line.length()-j);
+						//end
+						tab_check=check_tab(j);
+					}
 				}else{
 					cout<<"Scanner: No more scripts."<<endl;
 					in.clear();
@@ -142,6 +154,15 @@ void Scanner::get_char(){
 		}
 	}catch(...){
 		throw "#Errors! Scanner::get_char()#\n";
+	}
+	//tab数记录
+	if(tab_check==1){//tab进
+		ch=-128;
+		return;
+	}
+	else if(tab_check<0){//tab回
+		ch=-128-tab_check;//记录回复的层数
+		return;
 	}
 	if(ll!=0){
 		ch=line[cc];
@@ -156,6 +177,11 @@ void Scanner::get_char(){
 
 
 void Scanner::get_sym(){
+	//如果由多个待返回的dedent，先返回
+	if(tab_back>0){
+		tab_back--;
+		return;
+	}
 	while(ch==' '/*||ch=='\n'*/||ch=='#'){     //忽略空格以及注释，查找词头
 		if(ch!='#') get_char();
 		else{
@@ -173,6 +199,17 @@ void Scanner::get_sym(){
 	}
 	else if(ch=='\''||ch=='\"'){
 		check_str();     //字符串
+	}
+	else if(ch==-128){//处理indent
+		sym=Symbol::indent;
+		id="indent";
+		ch=' ';
+	}
+	else if(ch>=-127&&ch<0){//处理dedent
+		sym=Symbol::dedent;
+		id="dedent";
+		tab_back=ch+127;
+		ch=' ';
 	}
 	else {
 		check_operator();     //操作符
@@ -357,6 +394,30 @@ void Scanner::check_operator(){
 		get_char();
 		break;
 	}
+}
+
+
+
+int Scanner::check_tab(int tab_num){
+	if(tab_num>tab_counter.back()){
+		tab_counter.push_back(tab_num);
+		return 1;  //indent
+	}
+	else if(tab_num==tab_counter.back()){
+		return 0;  //do nothing
+	}
+	else if(tab_num<tab_counter.back()/*&&tab_num==tab_counter[tab_counter.size()-2]*/){
+		int ret=0;
+		while(tab_counter.back()!=tab_num){
+			tab_counter.pop_back();
+			ret++;
+		}
+		return -ret;  //dedent
+	}
+	else {
+		cout<<"#tab error!#"<<endl;
+		exit(1);
+	}  //wrong
 }
 
 

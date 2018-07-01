@@ -8,6 +8,7 @@
 #include<iostream>
 #include<sstream>
 #include<tuple>
+#include<vector>
 #include"Symbol.h"
 using namespace std;
 
@@ -45,6 +46,12 @@ private:
 	/*分析完全flag*/
 	bool is_empty=false;
 
+	/*tab计数栈*/
+	vector<int> tab_counter;
+
+	/*tab回退数*/
+	int tab_back=0;
+
 public:
 	/*标识符名字（如果是标识符）*/
 	string id="";
@@ -78,6 +85,9 @@ public:
 
 	/*分析操作符*/
 	void check_operator();
+
+	/*分析缩进个数*/
+	int check_tab(int);
 
 	/*交互输入流*/
 	void stream_input(istream&);
