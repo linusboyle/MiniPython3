@@ -6,7 +6,8 @@
 enum Symbol{
 	nul,               ident,               number_int,       number_double,        str,//无语义的类型、标识符、整数、浮点数、字符串
 
-	plus,             minus,             times,                    slash,          //算术运算符
+	plus,             minus,             times,                    slash,                    lmove,
+	rmove,                     //算术和位移运算符
 
 	false_py,     true_py,          none,                     break_py,           continue_py,  
 	for_py,         while_py,       def,                        return_py,           if_py,
@@ -19,7 +20,8 @@ enum Symbol{
 	percent,       hash,               at,                           tilde,                      becomes,
 	neq,               lss,                   leq,                         gtr,                         geq,
 	eql,                lparen,            rparen,                  comma,                semicolon,
-	caret,             period,           colon,                    tab                //其他字符
+	caret,             period,           colon,                    tab,                        lsqr,
+	rsqr,                //其他字符
 };
 //Keyword_Symbol_number=33
 

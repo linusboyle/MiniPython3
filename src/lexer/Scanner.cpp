@@ -39,6 +39,8 @@ Scanner::Scanner(){
 	ssym['.']=Symbol::period;
 	ssym[':']=Symbol::colon;
 	ssym['\t']=Symbol::tab;
+	ssym['[']=Symbol::lsqr;
+	ssym[']']=Symbol::rsqr;
 
 	/*设置保留字列表，用于查找*/
 	word=new string[Keyword_Symbol_number]{"False", "None", "True",  "and", "as", "assert",
@@ -118,6 +120,16 @@ void Scanner::get_char(){
 				if(in.getline(buffer, 256)){
 					line.assign(buffer);
 					line+="\n";
+					//去除tab空行以及tab注释的情况
+					int i=0; bool check=false;
+					while(line[i]!='\n'&&line[i]!='#'){
+						if(isalnum(line[i])){
+							check=true;
+							break;
+						}
+						i++;
+					}
+					if(!check) line="";//
 				}else{
 					cout<<"Scanner: No more scripts."<<endl;
 					in.clear();
@@ -143,8 +155,13 @@ void Scanner::get_char(){
 
 
 void Scanner::get_sym(){
-	while(ch==' '||ch=='\n')     //忽略空格和换行，查找词头
-		get_char();
+	while(ch==' '||ch=='\n'||ch=='#'){     //忽略空格和换行以及注释，查找词头
+		if(ch!='#') get_char();
+		else{
+			cc=ll;
+			ch=' ';
+		}
+	}
 	if(is_empty){return;}
 	else if((ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z')||(ch=='_')){
 		check_keyword_or_ident();     //关键字或标识符
@@ -203,7 +220,7 @@ void Scanner::check_number(){
 		if(ch=='.') dot+=1;
 	}while((ch>='0'&&ch<='9')||(ch=='.'&&dot<2));
 	//检查数值语法
-	bool not_number_rule=(tmp[0]=='0'&&tmp[1]!='.')||(tmp[tmp.length()-1]=='.');
+	bool not_number_rule=(tmp[0]=='0'&&tmp[1]!='.'&&tmp.length()!=1)||(tmp[tmp.length()-1]=='.');
 	if(not_number_rule){
 		cout<<"SyntaxError: invalid token"<<endl;
 		exit(1);
@@ -275,21 +292,31 @@ void Scanner::check_str(){
 
 void Scanner::check_operator(){
 	switch(ch){
-	case '<':             //小于或者小于等于
+	case '<':             //小于或者小于等于或左移运算
 		get_char();
 		if(ch=='='){
 			sym=Symbol::leq;
 			id="<=";
+			ch=' ';
+		}else if(ch=='<'){
+			sym=Symbol::lmove;
+			id="<<";
+			ch=' ';
 		}else{
 			sym=Symbol::lss;
 			id="<";
 		}
 		break;
-	case '>':            //大于或大于等于
+	case '>':            //大于或大于等于或右移运算
 		get_char();
 		if(ch=='='){
 			sym=Symbol::geq;
 			id=">=";
+			ch=' ';
+		}else if(ch=='>'){
+			sym=Symbol::rmove;
+			id=">>";
+			ch=' ';
 		}else{
 			sym=Symbol::gtr;
 			id=">";
@@ -300,6 +327,7 @@ void Scanner::check_operator(){
 		if(ch=='='){
 			sym=Symbol::neq;
 			id="!=";
+			ch=' ';
 		}else{
 			sym=Symbol::nul;
 			id="!";
@@ -310,6 +338,7 @@ void Scanner::check_operator(){
 		if(ch=='='){
 			sym=Symbol::eql;
 			id="==";
+			ch=' ';
 		}else{
 			sym=Symbol::becomes;
 			id="=";
