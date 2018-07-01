@@ -362,9 +362,9 @@ void Scanner::stream_input(istream& input){
 	//用于交互式编程时的即时输入
 	is_empty=false;
 	ch=' ';
-	string tmp;
-	input>>tmp;
-	in<<tmp;
+	char tmp[256];
+	input.getline(tmp,256);
+	in<<tmp<<'\n';
 }
 
 
