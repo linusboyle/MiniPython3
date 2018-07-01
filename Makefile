@@ -12,10 +12,8 @@ ast:
 	make -C src/ast
 
 gui:
-	cd src/gui
-	qmake
-	make
-	cd $ROOT
+	cd src/gui && qmake -makefile && cd $(ROOT)
+	make -C src/gui
 
 clean:
 	make clean -C src/ast
