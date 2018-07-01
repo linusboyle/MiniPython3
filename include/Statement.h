@@ -125,6 +125,11 @@ class Suite:public Statement{//语句块也是语句
         Suite(std::shared_ptr<Statement> last){
             this->add(last);
         }
+        Suite(const std::vector<std::shared_ptr<Statement>>& args){
+            for(int i=0,n=args.size();i!=n;i++){
+                this->add(args[i]);
+            }
+        }
 };
 
 //Control Flow
