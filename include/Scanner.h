@@ -1,7 +1,8 @@
-/*python è¯æ³•åˆ†æå™¨*/
+/*python ´Ê·¨·ÖÎöÆ÷*/
 
 #ifndef SCANNER_H
 #define SCANNER_H
+#include"Scanner.h"
 #include<string>
 #include<fstream>
 #include<iostream>
@@ -11,91 +12,93 @@
 #include"Symbol.h"
 using namespace std;
 
+
+
 class Scanner{
 private:
-	/*è¯»å…¥çš„å•ä¸ªå­—ç¬¦*/
+	/*¶ÁÈëµÄµ¥¸ö×Ö·û*/
 	char ch=' ';
 
-	/*å½“å‰åˆ†æçš„è¡Œ*/
+	/*µ±Ç°·ÖÎöµÄĞĞ*/
 	string line="";
 
-	/*å½“å‰è¡Œçš„é•¿åº¦ï¼ˆline lengthï¼‰*/
+	/*µ±Ç°ĞĞµÄ³¤¶È£¨line length£©*/
 	int ll=0;
 
-	/*å½“å‰å­—ç¬¦åœ¨è¡Œä¸­çš„ä½ç½®ï¼ˆcharacter counterï¼‰*/
+	/*µ±Ç°×Ö·ûÔÚĞĞÖĞµÄÎ»ÖÃ£¨character counter£©*/
 	int cc=0;
 
-	/*å½“å‰çš„å•è¯ç¬¦å·*/
+	/*µ±Ç°µÄµ¥´Ê·ûºÅ*/
 	Symbol sym;
 
-	/*ä¿ç•™å­—åˆ—è¡¨*/
+	/*±£Áô×ÖÁĞ±í*/
 	string* word;
 
-	/*ä¿ç•™å­—å¯¹åº”çš„ç¬¦å·å€¼*/
+	/*±£Áô×Ö¶ÔÓ¦µÄ·ûºÅÖµ*/
 	Symbol* wsym;
 
-	/*å•å­—ç¬¦çš„ç¬¦å·å€¼*/
+	/*µ¥×Ö·ûµÄ·ûºÅÖµ*/
 	Symbol* ssym;
 
-	/*è¾“å…¥æµ*/
+	/*ÊäÈëÁ÷*/
 	stringstream in;
 
-	/*åˆ†æå®Œå…¨flag*/
+	/*·ÖÎöÍêÈ«flag*/
 	bool is_empty=false;
 
-	/*tabè®¡æ•°æ ˆ*/
+	/*tab¼ÆÊıÕ»*/
 	vector<int> tab_counter;
 
-	/*tabå›é€€æ•°*/
+	/*tab»ØÍËÊı*/
 	int tab_back=0;
 
 public:
-	/*æ ‡è¯†ç¬¦åå­—ï¼ˆå¦‚æœæ˜¯æ ‡è¯†ç¬¦ï¼‰*/
+	/*±êÊ¶·ûÃû×Ö£¨Èç¹ûÊÇ±êÊ¶·û£©*/
 	string id="";
 
-	/*æ•°å€¼å¤§å°ï¼ˆå¦‚æœæ˜¯æ•°å­—ï¼‰*/
+	/*ÊıÖµ´óĞ¡£¨Èç¹ûÊÇÊı×Ö£©*/
 	int num_int=0;
 	double num_double=0.0;
 
-	/*å­—ç¬¦ä¸²å†…å®¹ï¼ˆå¦‚æœæ˜¯å­—ç¬¦ä¸²ï¼‰*/
+	/*×Ö·û´®ÄÚÈİ£¨Èç¹ûÊÇ×Ö·û´®£©*/
 	string str_content="";
 
-	/*è¯æ³•åˆ†æå™¨çš„æ„é€ ä¸åˆå§‹åŒ–*/
+	/*´Ê·¨·ÖÎöÆ÷µÄ¹¹ÔìÓë³õÊ¼»¯*/
 	Scanner();
 	Scanner(ifstream&);
 	Scanner(istream&);
 
-	/*è¯»å–ä¸€ä¸ªå­—ç¬¦*/
+	/*¶ÁÈ¡Ò»¸ö×Ö·û*/
 	void get_char();
 
-	/*è·å–è¯æ³•ç¬¦å·*/
+	/*»ñÈ¡´Ê·¨·ûºÅ*/
 	void get_sym();
 
-	/*åˆ†æå…³é”®å­—æˆ–è€…æ ‡è¯†ç¬¦*/
+	/*·ÖÎö¹Ø¼ü×Ö»òÕß±êÊ¶·û*/
 	void check_keyword_or_ident();
 
-	/*åˆ†ææ•°å­—*/
+	/*·ÖÎöÊı×Ö*/
 	void check_number();
 
-	/*åˆ†æå­—ç¬¦ä¸²*/
+	/*·ÖÎö×Ö·û´®*/
 	void check_str();
 
-	/*åˆ†ææ“ä½œç¬¦*/
+	/*·ÖÎö²Ù×÷·û*/
 	void check_operator();
 
-	/*åˆ†æç¼©è¿›ä¸ªæ•°*/
+	/*·ÖÎöËõ½ø¸öÊı*/
 	int check_tab(int);
 
-	/*äº¤äº’è¾“å…¥æµ*/
+	/*½»»¥ÊäÈëÁ÷*/
 	void stream_input(istream&);
 
-	/*è¿”å›åˆ†æç»“æœ*/
+	/*·µ»Ø·ÖÎö½á¹û*/
 	tuple<Symbol,int,double,string> return_output();
 
-	/*è¿”å›åˆ†æå®Œå…¨flag*/
+	/*·µ»Ø·ÖÎöÍêÈ«flag*/
 	bool return_flag();
 
-	/*ææ„å‡½æ•°*/
+	/*Îö¹¹º¯Êı*/
 	~Scanner();
 
 };

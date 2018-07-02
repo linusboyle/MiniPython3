@@ -164,6 +164,7 @@ void Scanner::get_char(){
 		ch=-128-tab_check;//记录回复的层数
 		return;
 	}
+	//end
 	if(ll!=0){
 		ch=line[cc];
 		cc++;
@@ -177,7 +178,7 @@ void Scanner::get_char(){
 
 
 void Scanner::get_sym(){
-	//如果由多个待返回的dedent，先返回
+	//如果有多个待返回的dedent，先返回
 	if(tab_back>0){
 		tab_back--;
 		return;
@@ -337,10 +338,16 @@ void Scanner::check_operator(){
 			sym=Symbol::leq;
 			id="<=";
 			ch=' ';
-		}else if(ch=='<'){
-			sym=Symbol::lmove;
-			id="<<";
-			ch=' ';
+		}else if(ch=='<'){    //左移或左移等于
+			get_char();
+			if(ch=='='){
+				sym=Symbol::lmoveeq;
+				id="<<=";
+				ch=' ';
+			}else{
+				sym=Symbol::lmove;
+				id="<<";
+			}
 		}else{
 			sym=Symbol::lss;
 			id="<";
@@ -352,10 +359,16 @@ void Scanner::check_operator(){
 			sym=Symbol::geq;
 			id=">=";
 			ch=' ';
-		}else if(ch=='>'){
-			sym=Symbol::rmove;
-			id=">>";
-			ch=' ';
+		}else if(ch=='>'){    //右移或右移等于
+			get_char();
+			if(ch=='='){
+				sym=Symbol::rmoveeq;
+				id=">>=";
+				ch=' ';
+			}else{
+				sym=Symbol::rmove;
+				id=">>";
+			}
 		}else{
 			sym=Symbol::gtr;
 			id=">";
@@ -381,6 +394,116 @@ void Scanner::check_operator(){
 		}else{
 			sym=Symbol::becomes;
 			id="=";
+		}
+		break;
+	case '+':        //加号或加等于
+		get_char();
+		if(ch=='='){
+			sym=Symbol::pluseq;
+			id="+=";
+			ch=' ';
+		}else{
+			sym=Symbol::plus;
+			id="+";
+		}
+		break;
+	case '-':        //减号或减等于
+		get_char();
+		if(ch=='='){
+			sym=Symbol::minuseq;
+			id="-=";
+			ch=' ';
+		}else{
+			sym=Symbol::minus;
+			id="-";
+		}
+		break;
+	case '*':        //乘号或乘等于或乘乘
+		get_char();
+		if(ch=='='){
+			sym=Symbol::timeseq;
+			id="*=";
+			ch=' ';
+		}else if(ch=='*'){  //乘乘或乘乘等于
+			get_char();
+			if(ch=='='){
+				sym=Symbol::dbtimeseq;
+				id="**=";
+				ch=' ';
+			}else{
+				sym=Symbol::dbtimes;
+				id="**";
+				//ch=' ';
+			}
+		}else{
+			sym=Symbol::times;
+			id="*";
+		}
+		break;
+	case '/':         //除号或除等于或除除
+		get_char();
+		if(ch=='='){
+			sym=Symbol::slasheq;
+			id="/=";
+			ch=' ';
+		}else if(ch=='/'){  //除除或除除等于
+			get_char();
+			if(ch=='='){
+				sym=Symbol::dbslasheq;
+				id="//=";
+				ch=' ';
+			}else{
+				sym=Symbol::dbslash;
+				id="//";
+				//ch=' ';
+			}
+		}else{
+			sym=Symbol::slash;
+			id="/";
+		}
+		break;
+	case '%':    //模或模等于
+		get_char();
+		if(ch=='='){
+			sym=Symbol::percenteq;
+			id="%=";
+			ch=' ';
+		}else{
+			sym=Symbol::percent;
+			id="%";
+		}
+		break;
+	case '|':      //或或或等于
+		get_char();
+		if(ch=='='){
+			sym=Symbol::oreq;
+			id="|=";
+			ch=' ';
+		}else{
+			sym=Symbol::or_py;
+			id="|";
+		}
+		break;
+	case '&':     //与或与等于
+		get_char();
+		if(ch=='='){
+			sym=Symbol::andeq;
+			id="&=";
+			ch=' ';
+		}else{
+			sym=Symbol::and_py;
+			id="&";
+		}
+		break;
+	case '^':    //抑或或抑或等于
+		get_char();
+		if(ch=='='){
+			sym=Symbol::careteq;
+			id="^=";
+			ch=' ';
+		}else{
+			sym=Symbol::caret;
+			id="^";
 		}
 		break;
 	default:          //其他的单字符

@@ -20,7 +20,7 @@ int main(){
 	int num_int;
 	double num_double;
 	string str;
-	string SymbolToString[68]
+	string SymbolToString[]
 	{
 		"nul",               "ident",               "number_int",       "number_double",       "str",
 
@@ -39,7 +39,10 @@ int main(){
 		"neq",               "lss",                   "leq",                         "gtr",                         "geq",
 		"eql",                "lparen",            "rparen",                  "comma",                "semicolon",
 		"caret",             "period",           "colon",                    "tab",                         "lsqr",
-		"rsqr",               "newline",         "indent",                  "dedent"
+		"rsqr",               "newline",         "indent",                  "dedent",                  "pluseq",
+		"minuseq",      "timeseq",        "slasheq",                "dbtimes",                "dbtimeseq",
+		"dbslash",        "dbslasheq",    "percenteq",           "oreq",                       "andeq",
+		"lmoveeq",      "rmoveeq",      "careteq"
 	};
 
 	while(!scanner.return_flag()){

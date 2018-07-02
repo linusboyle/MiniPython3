@@ -1,13 +1,13 @@
-/*å¯¹è¯ç±»çš„æšä¸¾*/
+/*¶Ô´ÊÀàµÄÃ¶¾Ù*/
 
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
 enum Symbol{
-	nul,               ident,               number_int,       number_double,        str,//æ— è¯­ä¹‰çš„ç±»å‹ã€æ ‡è¯†ç¬¦ã€æ•´æ•°ã€æµ®ç‚¹æ•°ã€å­—ç¬¦ä¸²
+	nul,               ident,               number_int,       number_double,        str,//ÎŞÓïÒåµÄÀàĞÍ¡¢±êÊ¶·û¡¢ÕûÊı¡¢¸¡µãÊı¡¢×Ö·û´®
 
 	plus,             minus,             times,                    slash,                    lmove,
-	rmove,                     //ç®—æœ¯å’Œä½ç§»è¿ç®—ç¬¦
+	rmove,                     //ËãÊõºÍÎ»ÒÆÔËËã·û
 
 	false_py,     true_py,          none,                     break_py,           continue_py,  
 	for_py,         while_py,       def,                        return_py,           if_py,
@@ -15,13 +15,16 @@ enum Symbol{
 	or_py,           not_py,          as,                           assert,                  class_py,
 	del,                except,           finally_py,            from,                     import,
 	is,                   lambda,         nonlocal,               pass,                     raise,
-	try_py,          with,                yield,                                           //pyä¿ç•™å­—
+	try_py,          with,                yield,                                           //py±£Áô×Ö
 
 	percent,       hash,               at,                           tilde,                      becomes,
 	neq,               lss,                   leq,                         gtr,                         geq,
 	eql,                lparen,            rparen,                  comma,                semicolon,
 	caret,             period,           colon,                    tab,                        lsqr,
-	rsqr,               newline,         indent,                  dedent //å…¶ä»–å­—ç¬¦
+	rsqr,               newline,         indent,                  dedent,                pluseq,
+	minuseq,      timeseq,       slasheq,                dbtimes,              dbtimeseq,
+	dbslash,        dbslasheq,   percenteq,          oreq,                     andeq,         
+	lmoveeq,      rmoveeq,     careteq//ÆäËû×Ö·û
 };
 //Keyword_Symbol_number=33
 
