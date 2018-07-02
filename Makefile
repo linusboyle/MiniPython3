@@ -6,10 +6,16 @@ export
 
 .PHONY:clean
 
-all:ast gui
+all:ast lexer tests gui
 
 ast:
 	make -C src/ast
+
+lexer:
+	make -C src/lexer
+
+tests:
+	make -C test
 
 gui:
 	cd src/gui && qmake -makefile && cd $(ROOT)
@@ -18,4 +24,5 @@ gui:
 clean:
 	make clean -C src/ast
 	make clean -C src/gui
+	make clean -C test 
 	rm src/gui/Makefile

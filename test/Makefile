@@ -1,9 +1,9 @@
 .PHONY:clean
 
-TARGET=assign_test ast_test create_test boolean_test calc_test condition_test If_test while_test funcdef_test container_test
+TARGET=assign_test ast_test create_test boolean_test calc_test condition_test If_test while_test funcdef_test container_test DynamicTest ScriptTest
 
-all:$(TARGET) ../lib/libast.a
-	@echo ast test has been compiled:$(TARGET)
+all:$(TARGET) ../lib/libast.a ../lib/liblexer.a
+	@echo test has been compiled:$(TARGET)
 
 assign_test: assign_test.cpp
 	$(CXX) $(CFLAGS) assign_test.cpp -o assign_test -L$(LIBPATH) -l:libast.a
@@ -34,6 +34,12 @@ funcdef_test: funcdef_test.cpp
 
 container_test: container_test.cpp
 	$(CXX) $(CFLAGS) container_test.cpp -o container_test  -L$(LIBPATH) -l:libast.a
+
+DynamicTest: DynamicTest.cpp
+	$(CXX) $(CFLAGS) DynamicTest.cpp -o DynamicTest  -L$(LIBPATH) -l:liblexer.a
+
+ScriptTest: ScriptTest.cpp
+	$(CXX) $(CFLAGS) ScriptTest.cpp -o ScriptTest  -L$(LIBPATH) -l:liblexer.a
 
 clean:
 	rm $(TARGET)

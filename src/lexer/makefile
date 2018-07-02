@@ -1,19 +1,12 @@
-all: ScriptTest.exe DynamicTest.exe
+.PHONY:clean
 
-DynamicTest.exe: Scanner.o DynamicTest.o
-	g++ -o DynamicTest.exe Scanner.o DynamicTest.o
+all: lib
 
-DynamicTest.o: DynamicTest.cpp Scanner.h Symbol.h
-	g++ -c DynamicTest.cpp Scanner.h Symbol.h
+lib: Scanner.o
+	ar rcs $(LIBPATH)/liblexer.a Scanner.o
 
-ScriptTest.exe: Scanner.o ScriptTest.o
-	g++ -o ScriptTest.exe ScriptTest.o Scanner.o
-
-ScriptTest.o: ScriptTest.cpp Scanner.h Symbol.h
-	g++ -c ScriptTest.cpp Scanner.h Symbol.h
-
-Scanner.o: Scanner.cpp Scanner.h Symbol.h
-	g++ -c Scanner.cpp Scanner.h Symbol.h
+Scanner.o: Scanner.cpp
+	g++ $(CFLAGS) -c Scanner.cpp
 
 clean:
-	del *.exe *.o *.gch
+	rm *.o
