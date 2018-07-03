@@ -144,7 +144,7 @@ void Scanner::get_char(){
 						tab_check=check_tab(j);
 					}
 				}else{
-					cout<<"Scanner: No more scripts."<<endl;
+					//cout<<"Scanner: No more scripts."<<endl;
 					in.clear();
 					break;
 				}
@@ -170,7 +170,7 @@ void Scanner::get_char(){
 		cc++;
 	}else{
 		ch='\0';
-		is_empty=true;
+		is_empty=1;
 		return;
 	}
 }
@@ -191,7 +191,7 @@ void Scanner::get_sym(){
 			break;
 		}
 	}
-	if(is_empty){return;}
+	if(is_empty>0){return;}
 	else if((ch>='A'&&ch<='Z')||(ch>='a'&&ch<='z')||(ch=='_')){
 		check_keyword_or_ident();     //关键字或标识符
 	}
@@ -547,7 +547,7 @@ int Scanner::check_tab(int tab_num){
 
 void Scanner::stream_input(istream& input){
 	//用于交互式编程时的即时输入
-	is_empty=false;
+	is_empty=0;
 	ch=' ';
 	char tmp[256];
 	input.getline(tmp,256);
@@ -558,9 +558,19 @@ void Scanner::stream_input(istream& input){
 
 tuple<Symbol,int,double,string> Scanner::return_output(){
 	get_sym();
-	if(is_empty){
+	if(is_empty>0){
+		if(is_empty==1){
+			is_empty=2;
+			return make_tuple(Symbol::newline,0,0,"newline");
+		}
 		//若代码分析完，调用返回(nul,0,0,"")
-		return make_tuple(Symbol::nul,0,0,"");
+		tab_counter.pop_back();
+		if(tab_counter.size()!=0) return make_tuple(Symbol::dedent,0,0,"dedent");
+		else{
+			is_empty=3;
+			cout<<"No more scripts."<<endl;
+			return make_tuple(Symbol::nul,0,0,"");
+		}
 	}
 	switch(sym){
 	case Symbol::number_int:
@@ -577,7 +587,7 @@ tuple<Symbol,int,double,string> Scanner::return_output(){
 
 
 bool Scanner::return_flag(){
-	return is_empty;
+	return is_empty==3;
 }
 
 

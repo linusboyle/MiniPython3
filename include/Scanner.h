@@ -44,7 +44,7 @@ private:
 	stringstream in;
 
 	/*分析完全flag*/
-	bool is_empty=false;
+	int is_empty=0;
 
 	/*tab计数栈*/
 	vector<int> tab_counter;
