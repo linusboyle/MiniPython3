@@ -1648,7 +1648,7 @@ yyreduce:
 
   case 75:
 
-    {(yyval).p = CREATE(CompareOperation, (compareop)(yyvsp[-1]).num_int, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
+    {(yyval).p = CREATE(CompareOperation, (compareop)(yyvsp[-1]).num_int, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
 
     break;
 
