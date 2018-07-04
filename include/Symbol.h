@@ -1,13 +1,13 @@
-/*¶Ô´ÊÀàµÄÃ¶¾Ù*/
+/*å¯¹è¯ç±»çš„æšä¸¾*/
 
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
 enum Symbol{
-	nul,               ident,               number_int,       number_double,        str,//ÎŞÓïÒåµÄÀàĞÍ¡¢±êÊ¶·û¡¢ÕûÊı¡¢¸¡µãÊı¡¢×Ö·û´®
+	nul,               ident,               number_int,       number_double,        str,//æ— è¯­ä¹‰çš„ç±»å‹ã€æ ‡è¯†ç¬¦ã€æ•´æ•°ã€æµ®ç‚¹æ•°ã€å­—ç¬¦ä¸²
 
 	plus,             minus,             times,                    slash,                    lmove,
-	rmove,                     //ËãÊõºÍÎ»ÒÆÔËËã·û
+	rmove,                     //ç®—æœ¯å’Œä½ç§»è¿ç®—ç¬¦
 
 	false_py,     true_py,          none,                     break_py,           continue_py,  
 	for_py,         while_py,       def,                        return_py,           if_py,
@@ -15,7 +15,7 @@ enum Symbol{
 	or_py,           not_py,          as,                           assert,                  class_py,
 	del,                except,           finally_py,            from,                     import,
 	is,                   lambda,         nonlocal,               pass,                     raise,
-	try_py,          with,                yield,                                           //py±£Áô×Ö
+	try_py,          with,                yield,                                           //pyä¿ç•™å­—
 
 	percent,       hash,               at,                           tilde,                      becomes,
 	neq,               lss,                   leq,                         gtr,                         geq,
@@ -24,7 +24,7 @@ enum Symbol{
 	rsqr,               newline,         indent,                  dedent,                pluseq,
 	minuseq,      timeseq,       slasheq,                dbtimes,              dbtimeseq,
 	dbslash,        dbslasheq,   percenteq,          oreq,                     andeq,         
-	lmoveeq,      rmoveeq,     careteq//ÆäËû×Ö·û
+	lmoveeq,      rmoveeq,     careteq//å…¶ä»–å­—ç¬¦
 };
 //Keyword_Symbol_number=33
 

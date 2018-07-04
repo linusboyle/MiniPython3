@@ -140,7 +140,12 @@ ReturnValue operator+ (const ReturnValue& operand1,const ReturnValue& operand2)
                 return RETURN_ERROR;
         }
     }
-    else
+    else if(operand1.type==RETURN_INT&&operand2.type==RETURN_FLOAT){
+        return operand1.integer_value+operand2.double_value;
+    }
+    else if(operand1.type==RETURN_FLOAT&&operand2.type==RETURN_INT){
+        return operand1.double_value+operand2.integer_value;
+    }
         return RETURN_ERROR;
 }
 
@@ -157,6 +162,7 @@ ReturnValue::~ReturnValue(){
 
 ReturnValue operator- (const ReturnValue& operand1,const ReturnValue& operand2)
 {
+
     if(_same_type(operand1,operand2))
     {
         switch(operand1.type)
@@ -171,7 +177,12 @@ ReturnValue operator- (const ReturnValue& operand1,const ReturnValue& operand2)
                 return RETURN_ERROR;
         }
     }
-    else
+    else if(operand1.type==RETURN_INT&&operand2.type==RETURN_FLOAT){
+        return operand1.integer_value-operand2.double_value;
+    }
+    else if(operand1.type==RETURN_FLOAT&&operand2.type==RETURN_INT){
+        return operand1.double_value-operand2.integer_value;
+    }
         return RETURN_ERROR;
 }
 
@@ -192,6 +203,12 @@ ReturnValue operator* (const ReturnValue& operand1,const ReturnValue& operand2)
         }
     }
     //容器和int相乘忽略
+    else if(operand1.type==RETURN_INT&&operand2.type==RETURN_FLOAT){
+        return operand1.integer_value*operand2.double_value;
+    }
+    else if(operand1.type==RETURN_FLOAT&&operand2.type==RETURN_INT){
+        return operand1.double_value*operand2.integer_value;
+    }
     else
         return RETURN_ERROR;
 }
@@ -318,23 +335,27 @@ ReturnValue operator% (const ReturnValue& operand1,const ReturnValue& operand2)
                             result.replace(m,2,sub.string_value);
                         }
                     }
+                    break;
                 case RETURN_INT:
                     {
                         if(result.at(m+1)=='d'){
                             result.replace(m,2,std::to_string(sub.integer_value));
                         }
                     }
+                    break;
                 case RETURN_FLOAT:
                     {
                         if(result.at(m+1)=='f'){
                             result.replace(m,2,std::to_string(sub.double_value));
                         }
                     }
+                    break;
                 default:
                     {
                         std::cerr<<"RuntimeError:argument cannot match the format of string"<<std::endl;
                         exit(1);
                     }
+                    break;
             }
         }
         return result;
@@ -421,6 +442,12 @@ ReturnValue operator<(const ReturnValue& operand1,const ReturnValue& operand2)
                 return RETURN_ERROR;
         }
     }
+    else if(operand1.type==RETURN_INT&&operand2.type==RETURN_FLOAT){
+        return operand1.integer_value<operand2.double_value;
+    }
+    else if(operand1.type==RETURN_FLOAT&&operand2.type==RETURN_INT){
+        return operand1.double_value<operand2.integer_value;
+    }
     else
         return RETURN_ERROR;
 }
@@ -445,6 +472,12 @@ ReturnValue operator>(const ReturnValue& operand1,const ReturnValue& operand2)
                 return RETURN_ERROR;
         }
     }
+    else if(operand1.type==RETURN_INT&&operand2.type==RETURN_FLOAT){
+        return operand1.integer_value>operand2.double_value;
+    }
+    else if(operand1.type==RETURN_FLOAT&&operand2.type==RETURN_INT){
+        return operand1.double_value>operand2.integer_value;
+    }
     else
         return RETURN_ERROR;
 }
@@ -468,6 +501,12 @@ ReturnValue operator==(const ReturnValue& operand1,const ReturnValue& operand2)
             default:
                 return RETURN_ERROR;
         }
+    }
+    else if(operand1.type==RETURN_INT&&operand2.type==RETURN_FLOAT){
+        return operand1.integer_value==operand2.double_value;
+    }
+    else if(operand1.type==RETURN_FLOAT&&operand2.type==RETURN_INT){
+        return operand1.double_value==operand2.integer_value;
     }
     else
         return RETURN_ERROR;

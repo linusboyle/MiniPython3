@@ -135,7 +135,7 @@ void Scanner::get_char(){
 						i++;
 					}
 					if(!check) line="";//end
-					else{    
+					else{
 						//前置tab记数
 						int j=0;
 						while(line[j]=='\t') j++;
@@ -183,7 +183,7 @@ void Scanner::get_sym(){
 		tab_back--;
 		return;
 	}
-	while(ch==' '/*||ch=='\n'*/||ch=='#'){     //忽略空格以及注释，查找词头
+	while(ch==' '||ch=='\r'/*||ch=='\n'*/||ch=='#'){     //忽略空格以及注释，查找词头
 		if(ch!='#') get_char();
 		else{
 			cc=ll;
@@ -221,7 +221,7 @@ void Scanner::get_sym(){
 
 void Scanner::check_keyword_or_ident(){
 	string tmp="";
-	do{       
+	do{
 		//读入字符
 		tmp.push_back(ch);
 		get_char();
