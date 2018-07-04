@@ -447,19 +447,19 @@ static const yytype_uint16 yyrline[] =
 {
        0,    31,    31,    32,    33,    36,    40,    41,    44,    45,
       47,    48,    51,    54,    57,    58,    61,    63,    64,    67,
-      68,    71,    72,    73,    82,    83,    90,    97,   110,   111,
-     113,   114,   116,   117,   120,   120,   120,   120,   120,   120,
-     120,   120,   121,   121,   121,   121,   129,   132,   133,   134,
-     137,   138,   139,   140,   143,   144,   145,   146,   148,   150,
-     153,   155,   158,   160,   165,   166,   168,   169,   172,   174,
-     175,   176,   177,   178,   179,   180,   182,   185,   185,   185,
-     185,   185,   185,   186,   187,   188,   189,   190,   191,   192,
-     193,   194,   195,   196,   197,   199,   200,   201,   202,   203,
-     205,   206,   207,   208,   209,   210,   217,   218,   219,   220,
-     221,   222,   223,   224,   225,   226,   227,   236,   258,   259,
-     274,   275,   278,   279,   280,   281,   295,   303,   307,   315,
-     316,   319,   320,   321,   322,   326,   327,   328,   329,   332,
-     333,   336,   337,   340
+      68,    71,    72,    73,    82,    83,    90,    97,   111,   112,
+     114,   115,   117,   118,   121,   121,   121,   121,   121,   121,
+     121,   121,   122,   122,   122,   122,   130,   133,   134,   135,
+     138,   139,   140,   141,   144,   145,   146,   147,   149,   151,
+     154,   156,   159,   161,   166,   167,   169,   170,   173,   175,
+     176,   177,   178,   179,   180,   181,   183,   186,   186,   186,
+     186,   186,   186,   187,   188,   189,   190,   191,   192,   193,
+     194,   195,   196,   197,   198,   200,   201,   202,   203,   204,
+     206,   207,   208,   209,   210,   211,   218,   219,   220,   221,
+     222,   223,   224,   225,   226,   227,   228,   237,   259,   260,
+     275,   276,   279,   280,   281,   282,   296,   304,   308,   316,
+     317,   320,   321,   322,   323,   327,   328,   329,   330,   333,
+     334,   337,   338,   341
 };
 #endif
 
@@ -1474,6 +1474,12 @@ yyreduce:
 
     break;
 
+  case 14:
+
+    {cout << "SimpleStmt !!!" << endl;}
+
+    break;
+
   case 16:
 
     {(yyval).p = CREATE(Suite, (yyvsp[-1]).svec);}
@@ -1517,11 +1523,24 @@ yyreduce:
   case 27:
 
     {
+			cout << "Atse" << endl;
 			(yyval).svec.clear();
 			for (unsigned int i = 0;i < (yyvsp[0]).evec.size();i++)
 				(yyval).svec.push_back(CREATE(Expression_Statement, (yyvsp[0]).evec[i]));
 			(yyval).p = CREATE(Suite, (yyval).svec);
 		}
+
+    break;
+
+  case 32:
+
+    {(yyval).evec.push_back(dpc(Expression)((yyvsp[0]).p));}
+
+    break;
+
+  case 33:
+
+    {(yyval).evec.clear();(yyval).evec.push_back(dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
@@ -1611,13 +1630,13 @@ yyreduce:
 
   case 69:
 
-    {(yyval).p = CREATE(BooleanOperation, OR, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BooleanOperation, OR, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 71:
 
-    {(yyval).p = CREATE(BooleanOperation, AND, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BooleanOperation, AND, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
@@ -1629,73 +1648,73 @@ yyreduce:
 
   case 75:
 
-    {(yyval).p = CREATE(CompareOperation, (compareop)(yyvsp[-1]).num_int, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(CompareOperation, (compareop)(yyvsp[-1]).num_int, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 83:
 
-    {(yyval).p = CREATE(BinaryOperation, BITOR, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, BITOR, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 85:
 
-    {(yyval).p = CREATE(BinaryOperation, BITXOR, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, BITXOR, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 87:
 
-    {(yyval).p = CREATE(BinaryOperation, BITAND, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, BITAND, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 89:
 
-    {(yyval).p = CREATE(BinaryOperation, LSHIFT, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, LSHIFT, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 90:
 
-    {(yyval).p = CREATE(BinaryOperation, RSHIFT, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, RSHIFT, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 92:
 
-    {(yyval).p = CREATE(BinaryOperation, ADD, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, ADD, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 93:
 
-    {(yyval).p = CREATE(BinaryOperation, SUB, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, SUB, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 95:
 
-    {(yyval).p = CREATE(BinaryOperation, MULT, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, MULT, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 96:
 
-    {(yyval).p = CREATE(BinaryOperation, DIV, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, DIV, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 97:
 
-    {(yyval).p = CREATE(BinaryOperation, MOD, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, MOD, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
   case 98:
 
-    {(yyval).p = CREATE(BinaryOperation, FLOORDIV, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, FLOORDIV, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
@@ -1719,7 +1738,7 @@ yyreduce:
 
   case 105:
 
-    {(yyval).p = CREATE(BinaryOperation, POW, dpc(Expression)((yyvsp[0]).p), dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).p = CREATE(BinaryOperation, POW, dpc(Expression)((yyvsp[-2]).p), dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
