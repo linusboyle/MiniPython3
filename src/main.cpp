@@ -15,7 +15,7 @@ using namespace std;
 
 Scanner* sc;
 
-bool end_flag = false; // a patch for end_of_file has no NEWLINE
+//bool end_flag = false; // a patch for end_of_file has no NEWLINE
 
 int yylex()
 {
@@ -31,13 +31,13 @@ int yylex()
 	tie(sym, num_int, num_double, str) = sc -> return_output();
 	cout << "sym = " << sym << " ";
 	if (sym == Symbol::newline) cout << endl;
-	
+	/*
 	if (sym == 0 && !end_flag)
 	{
 		end_flag = true;
 		sym = Symbol::newline;
 	}
-	
+	*/
 	// TODO
 	if (sym == Symbol::ident) yylval.str = str;
 	if (sym == Symbol::number_int) {yylval.intflag = true;yylval.num_int = num_int;}

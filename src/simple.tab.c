@@ -456,10 +456,10 @@ static const yytype_uint16 yyrline[] =
      185,   185,   185,   186,   187,   188,   189,   190,   191,   192,
      193,   194,   195,   196,   197,   199,   200,   201,   202,   203,
      205,   206,   207,   208,   209,   210,   217,   218,   219,   220,
-     221,   222,   223,   224,   225,   226,   227,   233,   252,   253,
-     268,   269,   272,   273,   274,   275,   289,   297,   301,   309,
-     310,   313,   314,   315,   316,   320,   321,   322,   323,   326,
-     327,   330,   331,   334
+     221,   222,   223,   224,   225,   226,   227,   236,   258,   259,
+     274,   275,   278,   279,   280,   281,   295,   303,   307,   315,
+     316,   319,   320,   321,   322,   326,   327,   328,   329,   332,
+     333,   336,   337,   340
 };
 #endif
 
@@ -1768,9 +1768,12 @@ yyreduce:
   case 116:
 
     {
-				(yyval).evec.clear();
-				if ((yyvsp[-2]).str == string("print")) (yyval).p = CREATE(Print_Statement, CREATE(String, string("")));
-				else (yyval).p = CREATE(FunctionCall, (yyvsp[-2]).str, (yyval).evec);
+				/*
+				$$.evec.clear();
+				if ($1.str == string("print")) $$.p = CREATE(Print_Statement, CREATE(String, string("")));
+				else
+				*/
+				(yyval).p = CREATE(FunctionCall, (yyvsp[-2]).str, (yyval).evec);
 			}
 
     break;
@@ -1778,22 +1781,25 @@ yyreduce:
   case 117:
 
     {
-				if ((yyvsp[-3]).str == string("print")) (yyval).p = CREATE(Print_Statement, (yyvsp[-1]).evec[0]);
-				else if ((yyvsp[-3]).str == string("range"))
+				/*
+				if ($1.str == string("print")) $$.p = CREATE(Print_Statement, $3.evec[0]);
+				else if ($1.str == string("range"))
 				{
-					if ((yyvsp[-1]).evec.size() == 1)
+					if ($3.evec.size() == 1)
 					{
 						auto tmp0 = CREATE(Number, 0),tmp1 = CREATE(Number, 1);
-						(yyval).p = CREATE(Range, tmp0, (yyvsp[-1]).evec[0], tmp1);
+						$$.p = CREATE(Range, tmp0, $3.evec[0], tmp1);
 					}
-					else if ((yyvsp[-1]).evec.size() == 2)
+					else if ($3.evec.size() == 2)
 					{
 						auto tmp1 = CREATE(Number, 1);
-						(yyval).p = CREATE(Range, (yyvsp[-1]).evec[0], (yyvsp[-1]).evec[1], tmp1);
+						$$.p = CREATE(Range, $3.evec[0], $3.evec[1], tmp1);
 					}
-					else (yyval).p = CREATE(Range, (yyvsp[-1]).evec[0], (yyvsp[-1]).evec[1], (yyvsp[-1]).evec[2]);
+					else $$.p = CREATE(Range, $3.evec[0], $3.evec[1], $3.evec[2]);
 				}
-				else (yyval).p = CREATE(FunctionCall, (yyvsp[-3]).str, (yyvsp[-1]).evec);
+				*/
+				//if (NAME == string("print")) $$.p = CREATE(FunctionCall, );
+				(yyval).p = CREATE(FunctionCall, (yyvsp[-3]).str, (yyvsp[-1]).evec);
 			}
 
     break;
