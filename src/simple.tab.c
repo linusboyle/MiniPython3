@@ -1846,7 +1846,7 @@ yyreduce:
 
   case 124:
 
-    {(yyval).evec.push_back(dpc(Expression)((yyvsp[-2]).p));}
+    {(yyval).evec.push_back(dpc(Expression)((yyvsp[0]).p));}
 
     break;
 
