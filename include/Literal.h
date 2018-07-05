@@ -79,4 +79,10 @@ class NameConstant:public Expression
         _name_constant getType();
         virtual ReturnValue exec();
 };
+
+class Tuple:public Expression{
+    public:
+        Tuple(const std::vector<std::shared_ptr<Expression>>&);
+        virtual ReturnValue exec() override final;
+};
 #endif

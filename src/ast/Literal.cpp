@@ -101,6 +101,19 @@ ReturnValue NameConstant::exec()
     }
 }
 
+Tuple::Tuple(const std::vector<std::shared_ptr<Expression>>& src){
+    for(int i=0,n=src.size();i!=n;++i){
+        this->add(src.at(i));
+    }
+}
+
+ReturnValue Tuple::exec() {
+    std::vector<ReturnValue> result;
+    for(int i=0,n=getChildNumber();i!=n;++i){
+        result.push_back(this->getChild(i)->exec());
+    }
+    return ReturnValue(RETURN_TUPLE,result);
+}
 //Formatted_String::Formatted_String(const std::string& base,std::vector<std::shared_ptr<Expression>>& _value):base_string(base){
     //for(int i=0,n=_value.size();i!=n;++i){
         //this->add(_value[i]);

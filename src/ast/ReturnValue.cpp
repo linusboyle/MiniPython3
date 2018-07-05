@@ -50,10 +50,12 @@ ReturnValue::ReturnValue(int integer_value):integer_value(integer_value)
     type=RETURN_INT;
 }
 
-ReturnValue::ReturnValue(std::string string_value):string_value(string_value)
+ReturnValue::ReturnValue(const std::string& string_value):string_value(string_value)
 {
     type=RETURN_STRING;
 }
+
+ReturnValue::ReturnValue(const char* value):ReturnValue(std::string(value)){}
 
 ReturnValue::ReturnValue(double value):double_value(value)
 {
@@ -314,6 +316,30 @@ ReturnValue operator^ (const ReturnValue& operand1,const ReturnValue& operand2)
 //FIXED
 ReturnValue operator% (const ReturnValue& operand1,const ReturnValue& operand2)
 {
+    if(operand1.type==RETURN_STRING){
+        switch(operand2.type){
+            case RETURN_INT:
+                {
+                    std::vector<ReturnValue> vec;
+                    vec.push_back(operand2);
+                    return operand1%ReturnValue(RETURN_TUPLE,vec);
+                }
+            case RETURN_FLOAT:
+                {
+                    std::vector<ReturnValue> vec;
+                    vec.push_back(operand2);
+                    return operand1%ReturnValue(RETURN_TUPLE,vec);
+                }
+            case RETURN_STRING:
+                {
+                    std::vector<ReturnValue> vec;
+                    vec.push_back(operand2);
+                    return operand1%ReturnValue(RETURN_TUPLE,vec);
+                }
+            default:
+                break;
+        }
+    }
     if(operand1.type==RETURN_STRING&&operand2.type==RETURN_TUPLE){
         std::string result=operand1.string_value;
         auto vec=operand2.container;

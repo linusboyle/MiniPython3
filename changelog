@@ -3,3 +3,5 @@ note the change:
 	fix the crlf and lf terminator difference causing inconsistency
 	fix the bug that __name__ is a boolean value
 	fix the calculation between float and int
+7-5:
+	add tuple literals,which should fix the range problem

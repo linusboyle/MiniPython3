@@ -36,7 +36,7 @@ AstFactory::AstFactory(){
     //FIXME
     //关于模块管理
     //如果要做这一块的话，这里不能这么直接
-    setValue("__name__",ReturnValue("main"));
+    setValue("__name__","__main__");
 
     //TODO
     //push default function,such as print();

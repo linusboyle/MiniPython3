@@ -76,12 +76,13 @@ class ReturnValue
 
         ReturnValue(double);
         ReturnValue(int);
+        ReturnValue(const std::string&);
+        ReturnValue(const char*);
         ReturnValue(bool);
         //ReturnValue(const ReturnValue&);
         //I dont want to take char as input,which will be converted to int
         ReturnValue(char)=delete;
 
-        ReturnValue(std::string);
 
         //interpret the value to bool or int if possible
         int convert2int() const;

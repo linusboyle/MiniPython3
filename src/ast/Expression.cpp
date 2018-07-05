@@ -89,7 +89,7 @@ ReturnValue BinaryOperation::exec()
         {
             auto tmp=value1/value2;
             if(tmp.type==RETURN_FLOAT)
-                return floor(tmp.double_value);
+                return int(std::floor(tmp.double_value));
             else
                 return tmp;
         }
