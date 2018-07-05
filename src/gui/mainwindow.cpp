@@ -152,8 +152,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-QByteArray MainWindow::outputbuff;
-
 MainWindow::~MainWindow()
 {
 

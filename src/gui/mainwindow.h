@@ -23,7 +23,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    static QByteArray outputbuff;
+    QByteArray outputbuff;
     bool isChanged;//检查保存与否
     QString fileNameString;//文件名字
 
