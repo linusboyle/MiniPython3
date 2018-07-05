@@ -23,7 +23,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
+    static QByteArray outputbuff;
     bool isChanged;//检查保存与否
     QString fileNameString;//文件名字
 
@@ -79,13 +79,12 @@ private slots:
     void on_changed();//菜单栏
 
     void on_run();
-
+    void clear_buff();
     //void showTextInfo();
     //void stdcout();
 
     void outlog();
     void handleError(QProcess::ProcessError);
-
 signals:
     void outlogtext(QString ver);
 

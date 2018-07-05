@@ -107,7 +107,7 @@ MainWindow::MainWindow(QWidget *parent)
     run = new QAction("解释",this);//解释
     runMenu->addAction(run);
     connect(run,SIGNAL(triggered()),this,SLOT(on_run()));
-
+    connect(run,SIGNAL(triggered()),this,SLOT(clear_buff()));
 
 
 
@@ -152,11 +152,17 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-
+QByteArray MainWindow::outputbuff;
 
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::clear_buff()
+{
+    outputbuff.clear();
+    return;
 }
 
 void MainWindow::on_new()
@@ -307,10 +313,10 @@ void MainWindow::on_run()
 
 void MainWindow::outlog()
 {
-    QByteArray tmp = p->readAllStandardOutput();
-    QString abc=tmp;
+    outputbuff.append(p->readAllStandardOutput());
+    QString abc=outputbuff;
     qDebug()<<abc<<abc.length();
-    qDebug()<<tmp<<tmp.length();
+    //qDebug()<<tmp<<tmp.length();
     qDebug()<<abc.remove(QRegExp("\0"));
     emit outlogtext(abc);
     text2->document()->setPlainText(abc);
