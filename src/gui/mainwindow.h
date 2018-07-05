@@ -83,6 +83,11 @@ private slots:
     //void showTextInfo();
     //void stdcout();
 
+    void outlog();
+    void handleError(QProcess::ProcessError);
+
+signals:
+    void outlogtext(QString ver);
 
 
 };

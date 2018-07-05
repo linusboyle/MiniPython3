@@ -4,3 +4,6 @@ minipy:main.cpp PyInterpreter.cpp CommandLineParser.cpp  simple.tab.c
 	@echo
 	@echo
 	@echo Compilation DONE,GOTO bin/ folder to find the "minipy" program
+
+clean:
+	rm $(ROOT)/bin/minipy

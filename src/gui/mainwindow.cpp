@@ -1,13 +1,13 @@
 #include "mainwindow.h"
-#include "markdown_highlighter.h"
+#include "PythonSyntaxHighlighter.h"
 #include <QMessageBox>
 #include<QVBoxLayout>
 #include<QString>
-#include<func.h>
 #include<QProcess>
 #include<iostream>
-
-
+#include <QDebug>
+#include<QFile>
+#include <typeinfo>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -113,36 +113,42 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(text1,SIGNAL(textChanged()),this,SLOT(on_changed()));//当前数据是否改变
 
-    markdown_highlighter*  md_high = new markdown_highlighter(text1);//c++高亮字设置
-    md_high->SetColorText("and",Qt::green);
-    md_high->SetColorText("elif",Qt::green);
-    md_high->SetColorText("import",Qt::blue);
-    md_high->SetColorText("return",Qt::blue);
-    md_high->SetColorText("as",Qt::blue);
-    md_high->SetColorText("else",Qt::blue);
-    md_high->SetColorText("in",Qt::blue);
-    md_high->SetColorText("try",Qt::green);
-    md_high->SetColorText("assert",Qt::green);
-    md_high->SetColorText("except",Qt::green);
-    md_high->SetColorText("is",Qt::green);
-    md_high->SetColorText("while",Qt::blue);
-    md_high->SetColorText("break",Qt::blue);
-    md_high->SetColorText("finally",Qt::blue);
-    md_high->SetColorText("lambda",Qt::blue);
-    md_high->SetColorText("with",Qt::blue);
-    md_high->SetColorText("class",Qt::green);
-    md_high->SetColorText("for",Qt::green);
-    md_high->SetColorText("not",Qt::green);
-    md_high->SetColorText("yield",Qt::green);
-    md_high->SetColorText("continue",Qt::blue);
-    md_high->SetColorText("from",Qt::blue);
-    md_high->SetColorText("or",Qt::blue);
-    md_high->SetColorText("def",Qt::blue);
-    md_high->SetColorText("global",Qt::blue);
-    md_high->SetColorText("pass",Qt::green);
-    md_high->SetColorText("del",Qt::green);
-    md_high->SetColorText("if",Qt::green);
-    md_high->SetColorText("raise",Qt::green);
+    //markdown_highlighter*  md_high = new markdown_highlighter(text1);//c++高亮字设置
+    PythonSyntaxHighlighter *pythonHighlighter = new PythonSyntaxHighlighter(text1->document());
+
+    //md_high->SetColorText("and",Qt::green);
+    //md_high->SetColorText("elif",Qt::green);
+    //md_high->SetColorText("import",Qt::blue);
+    //md_high->SetColorText("return",Qt::blue);
+    //md_high->SetColorText("as",Qt::blue);
+    //md_high->SetColorText("else",Qt::blue);
+    //md_high->SetColorText("in",Qt::blue);
+    //md_high->SetColorText("try",Qt::green);
+    //md_high->SetColorText("assert",Qt::green);
+    //md_high->SetColorText("except",Qt::green);
+    //md_high->SetColorText("is",Qt::green);
+    //md_high->SetColorText("while",Qt::blue);
+    //md_high->SetColorText("break",Qt::blue);
+    //md_high->SetColorText("finally",Qt::blue);
+    //md_high->SetColorText("lambda",Qt::blue);
+    //md_high->SetColorText("with",Qt::blue);
+    //md_high->SetColorText("class",Qt::green);
+    //md_high->SetColorText("for",Qt::green);
+    //md_high->SetColorText("not",Qt::green);
+    //md_high->SetColorText("yield",Qt::green);
+    //md_high->SetColorText("continue",Qt::blue);
+    //md_high->SetColorText("from",Qt::blue);
+    //md_high->SetColorText("or",Qt::blue);
+    //md_high->SetColorText("def",Qt::blue);
+    //md_high->SetColorText("global",Qt::blue);
+    //md_high->SetColorText("pass",Qt::green);
+    //md_high->SetColorText("del",Qt::green);
+    //md_high->SetColorText("if",Qt::green);
+    //md_high->SetColorText("raise",Qt::green);
+
+    p=new QProcess(this);
+    connect(p, SIGNAL(readyReadStandardOutput()), this, SLOT(outlog()));
+    connect(p, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleError(QProcess::ProcessError)));
 
 }
 
@@ -245,12 +251,12 @@ void MainWindow::on_allSelect()
 
 void MainWindow::on_howToUse()
 {
-    QMessageBox::information(this,"如何使用","PHP是世界上最好的语言");
+    QMessageBox::information(this,"如何使用","把代码输进去，然后点解释——bang！");
 }
 
 void MainWindow::on_aboutSoftware()
 {
-    QMessageBox::information(this,"关于软件","PHP是世界上最好的语言");
+    QMessageBox::information(this,"关于软件","2018 all right reserved,作者；吕传承，陈熠豪，张子禾，韩志磊");
 }
 
 void MainWindow::on_changed()
@@ -258,47 +264,69 @@ void MainWindow::on_changed()
     isChanged = true;
 }
 
+
 void MainWindow::on_run()
 {
-    /*QString s = text1->toPlainText();
+    QFile input_file("in.txt");
 
-    QStringList s2=s.split(",");
+    //QFile output_file("out.txt");
 
-    p->start("E:\\QT\\Project\\TextBook2\\TextBook2\\1.exe",QStringList());
+    QString input = text1->toPlainText();
 
-    if(p->state()==QProcess::Starting){
-        std::cout<<"nice"<<std::endl;
+    if (!input_file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
 
-    }
-    else{
-        std::cout<<"no"<<std::endl;
-        exit(1);
-    }
-    text2->append(p->readAllStandardOutput());*/
+    QTextStream out(&input_file);
 
-    this->on_saveAs();
+    out << input;
 
+    //p->setStandardInputFile("in.txt");
 
+    QStringList argument;
+    QString program="./minipy";
+    argument<<"in.txt";
+
+    p->start(program,argument);
+    p->closeWriteChannel();
 }
 
+/*void MainWindow::on_run()
+{
+    QString in =text1->toPlainText();
 
+    //text2->setPlainText(in);
 
+    p->start("1.exe");
 
+    p->write(in.toStdString().c_str());
 
+    p->closeWriteChannel();
 
+    //    p->waitForStarted();
+}*/
 
+void MainWindow::outlog()
+{
+    QByteArray tmp = p->readAllStandardOutput();
+    QString abc=tmp;
+    qDebug()<<abc<<abc.length();
+    qDebug()<<tmp<<tmp.length();
+    qDebug()<<abc.remove(QRegExp("\0"));
+    emit outlogtext(abc);
+    text2->document()->setPlainText(abc);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void MainWindow::handleError(QProcess::ProcessError error)
+{
+     switch(error) {
+     case QProcess::FailedToStart:
+        qDebug() << "Failed to start, may be due to insufficient permissions";
+        break;
+     case QProcess::Crashed:
+        qDebug() << "Program crashed.";
+        break;
+     default:
+        break;
+     //debug each case..
+    }
+}

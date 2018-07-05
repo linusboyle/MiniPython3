@@ -1476,7 +1476,7 @@ yyreduce:
 
   case 14:
 
-    {cout << "SimpleStmt !!!" << endl;}
+    {/*cout << "SimpleStmt !!!" << endl*/;}
 
     break;
 
@@ -1523,7 +1523,7 @@ yyreduce:
   case 27:
 
     {
-			cout << "Atse" << endl;
+			/*cout << "Atse" << endl;*/
 			(yyval).svec.clear();
 			for (unsigned int i = 0;i < (yyvsp[0]).evec.size();i++)
 				(yyval).svec.push_back(CREATE(Expression_Statement, (yyvsp[0]).evec[i]));

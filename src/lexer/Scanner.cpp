@@ -13,7 +13,7 @@ using namespace std;
 
 
 Scanner::Scanner(){
-	cout<<"Scanner constructing...";
+	//cout<<"Scanner constructing...";
 
 	/*ÉèÖÃtab¼ÇÊıÕ»*/
 	tab_counter.push_back(0);
@@ -89,28 +89,28 @@ Scanner::Scanner(){
 	wsym[31]=Symbol::with;
 	wsym[32]=Symbol::yield;
 
-	cout<<"finished."<<endl;
+	//cout<<"finished."<<endl;
 }
 
 
 
 Scanner::Scanner(ifstream& input) : Scanner(){
-	cout<<"Scanner(ifstream&)...";
+	//cout<<"Scanner(ifstream&)...";
 	if(input.is_open()){
 		in<<input.rdbuf();
 	}
 	else cout<<"#Error! Scanner::Scanner(ifstream&)#"<<endl;
-	cout<<"finished"<<endl;
+	//cout<<"finished"<<endl;
 }
 
 
 
 Scanner::Scanner(istream& input) : Scanner(){
-	cout<<"Scanner(istream&)...";
+	//cout<<"Scanner(istream&)...";
 	string tmp;
 	input>>tmp;
 	in<<tmp;
-	cout<<"finished"<<endl;
+	//cout<<"finished"<<endl;
 }
 
 
@@ -568,7 +568,7 @@ tuple<Symbol,int,double,string> Scanner::return_output(){
 		if(tab_counter.size()!=0) return make_tuple(Symbol::dedent,0,0,"dedent");
 		else{
 			is_empty=3;
-			cout<<"No more scripts."<<endl;
+			//cout<<"No more scripts."<<endl;
 			return make_tuple(Symbol::nul,0,0,"");
 		}
 	}

@@ -23,9 +23,12 @@ main:
 gui:
 	cd src/gui && qmake -makefile && cd $(ROOT)
 	make -C src/gui
+	cp src/gui/TextBook2 bin/
 
 clean:
 	make clean -C src/ast
 	make clean -C src/gui
 	make clean -C test 
+	make clean -C src
+	rm bin/TextBook2
 	rm src/gui/Makefile

@@ -27,11 +27,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    markdown_highlighter.cpp
+        highlighter.cpp
 
 HEADERS += \
         mainwindow.h \
-    markdown_highlighter.h
+        PythonSyntaxHighlighter.h
 
 FORMS += \
         mainwindow.ui
