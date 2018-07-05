@@ -18,8 +18,9 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 
 //the command line argument parser class
 
-#ifndef  COMMANDLINEPARSER_H
+#ifndef COMMANDLINEPARSER_H
 #define COMMANDLINEPARSER_H
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -29,8 +30,8 @@ class CommandLineParser
     private:
         std::vector<std::string> tokens;
     public:
-        CommandLineParser(int& argc,char** argv);
-        int getArgc();
+        CommandLineParser(int argc,char** argv);
+        int getArgumentNumber();
         const std::string& getFileName();
         bool optionExist(const std::string& option);
         const std::string& getOption(const std::string &option);

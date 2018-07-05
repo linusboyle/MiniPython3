@@ -19,10 +19,10 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 //the command line argument parser class
 #include "CommandLineParser.h"
 
-CommandLineParser::CommandLineParser(int& argc,char** argv)
+CommandLineParser::CommandLineParser(int argc,char** argv)
 {
     //convert to cpp style
-    for(int i=0;i<argc;i++)
+    for(int i=1;i<argc;i++)
     {
         tokens.push_back(std::string(argv[i]));
     }
@@ -44,12 +44,19 @@ const std::string& CommandLineParser::getOption(const std::string& option)
     return empty_string;
 }
 
-int CommandLineParser::getArgc()
+int CommandLineParser::getArgumentNumber()
 {
     return tokens.size();
 }
 
 const std::string& CommandLineParser::getFileName()
 {
+    for(int i=0,n=tokens.size();i!=n;i++){
+        if(tokens[i]=="-v"||tokens[i]=="-h")
+            continue;
+        else
+            return tokens[i];
+    }
+    //FIXME
     return tokens[1];
 }

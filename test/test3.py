@@ -1,13 +1,11 @@
-
-
 def deepdiv(i, j):
 	while (i % j == 0):
 		i /= j
-		print '%d*' % j,
+		print ('%d*' % j),
 		if (i / j == 1):
 			break
 	if i % j == 0:
-		print '%d' % j
+		print ('%d' % j)
 		i /= j
 	return i
 
@@ -21,10 +19,10 @@ def is_prime(num):
 			break
 		j += 1
 	if flag:
-		print "%d is a prime." % num
+		print ("%d is a prime." % num)
 		return True
 	else:
-		print "%d is not a prime." % num
+		print ("%d is not a prime." % num)
 		return False
 
 
@@ -34,10 +32,10 @@ def main():
 			continue
 		j = 2
 		temp = i
-		print '%d = ' % temp ,
+		print ('%d = ' % temp ),
 		while (temp != 1):
 			if (temp == j):
-				print j
+				print (j)
 				break
 			temp = deepdiv(temp, j)
 			if temp == 1:

@@ -23,32 +23,36 @@ along with this program.  If not, see http://www.gnu.org/licenses.
 #define PYINTERPRETER_H
 
 #include "CommandLineParser.h"
-#include <fstream>
+#include "Scanner.h"
 
 //enumeration indicating the mode to run this program
 //
-enum interpreter_mode
-{
-    MODE_HELP,
-    MODE_ERROR,
-    MODE_INTERACTIVE,
-    MODE_SCRIPT,
-};
+//enum interpreter_mode
+//{
+    //MODE_HELP,
+    //MODE_ERROR,
+    //MODE_INTERACTIVE,
+    //MODE_SCRIPT,
+//};
 
 class PyInterpreter
 {
     private:
-        CommandLineParser commandlineparser;
-        enum interpreter_mode mode;
-        std::fstream fin;
-    public:
-        PyInterpreter(int& argc,char** argv);
-        void exec();
-        void setMode();
+        CommandLineParser* commandlineparser;
+        //enum interpreter_mode mode;
+        //Scanner* sc;
+        std::ifstream fin;
         void printHelp();
-        bool streamInit(const std::string& filepath);
+        void streamInit(const std::string& filepath);
+        //void setMode();
+        //void loop();
+    public:
+        //static PyInterpreter& getApp();
+        PyInterpreter(int argc,char** argv);
+        //std::tuple<Symbol,int,double,string> lex();
+        void exec();
         //general loop for both modes,to exit from interactive mode call the exit(0) function;
-        void loop();
+        ~PyInterpreter();
 };
 
 #endif

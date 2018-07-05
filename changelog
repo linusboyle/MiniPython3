@@ -5,3 +5,5 @@ note the change:
 	fix the calculation between float and int
 7-5:
 	add tuple literals,which should fix the range problem
+	fix the range bug
+	add the main function
