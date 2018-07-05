@@ -319,6 +319,13 @@ ReturnValue Range::exec() {
     }
     else{
         std::vector<ReturnValue> result;
+        if(end.integer_value==0){
+            //DONE
+            //bug fix:只有一个参数传入的情况下通过把第二位置零，实现和a相同长度的数组创建
+            //start from 0
+            end.integer_value=beg.integer_value;
+            beg.integer_value=0;
+        }
         for(int i=beg.integer_value;i<end.integer_value;i+=step.integer_value){
             result.push_back(i);
         }

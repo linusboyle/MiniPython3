@@ -64,7 +64,7 @@ AstFactory::AstFactory(){
                 )
             ),
             std::make_shared<Argument>("a"),
-            std::make_shared<Argument>("b"),
+            std::make_shared<Argument>("b",0),
             std::make_shared<Argument>("c",1)//默认是1,代表的是步长
     );
     addFunction(range);
