@@ -1744,7 +1744,7 @@ yyreduce:
 
   case 107:
 
-    {(yyval).p = (yyvsp[-1]).evec[0];}
+    {(yyval).p = CREATE(Tuple, (yyvsp[-1]).evec);}
 
     break;
 
